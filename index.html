@@ -1,10 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Ryan Chisholm</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ryan Chisholm | Portfolio</title>
+  <meta name="description" content="Portfolio of Ryan Chisholm — CS projects, experience, and contact." />
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <h1>Ryan Chisholm</h1>
-  <p>Computer Science Student</p>
+  <header class="container">
+    <nav class="nav">
+      <div class="logo">RC</div>
+      <div class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1>Ryan Chisholm</h1>
+      <p class="subtitle">
+        Computer Science student building clean, practical software.
+        Interested in <strong>systems</strong>, <strong>games</strong>, and <strong>backend</strong>.
+      </p>
+
+      <div class="buttons">
+        <a class="btn primary" href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+        <a class="btn" href="https://github.com/rychisholm3" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="mailto:your@email.com">Email</a>
+      </div>
+    </section>
+  </header>
+
+  <main class="container">
+    <section id="projects" class="section">
+      <h2>Projects</h2>
+      <p class="section-note">A few things I’ve built recently.</p>
+
+      <div class="grid">
+        <!-- Project 1 -->
+        <article class="card">
+          <div class="card-top">
+            <h3>BORG Interpreter (C++)</h3>
+            <span class="tag">C++</span>
+          </div>
+          <p class="desc">
+            An interpreter for a custom language with scoped variables, expressions, and commands (VAR, PRINT, ++/--).
+          </p>
+          <ul>
+            <li>Implemented parsing + evaluation with scope tracking</li>
+            <li>Designed clean error handling + test cases</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">Parsing</span>
+            <span class="chip">Scopes</span>
+            <span class="chip">OOP</span>
+          </div>
+          <div class="links">
+            <a href="https://github.com/yourrepo" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="card">
+          <div class="card-top">
+            <h3>Connect Four (Python)</h3>
+            <span class="tag">Python</span>
+          </div>
+          <p class="desc">
+            A networked Connect Four game with clean game logic + client/server communication.
+          </p>
+          <ul>
+            <li>Built move validation and win detection</li>
+            <li>Designed a simple text UI for gameplay</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">Sockets</span>
+            <span class="chip">Game Logic</span>
+          </div>
+          <div class="links">
+            <a href="https://github.com/yourrepo" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="card">
+          <div class="card-top">
+            <h3>Unity Prototype</h3>
+            <span class="tag">Unity / C#</span>
+          </div>
+          <p class="desc">
+            A small Unity game prototype with UI menus, score tracking, and settings (toggle/slider).
+          </p>
+          <ul>
+            <li>Implemented UI flow (main menu → options → game)</li>
+            <li>Added score system and restart/exit behavior</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">UI</span>
+            <span class="chip">Game Loop</span>
+            <span class="chip">C#</span>
+          </div>
+          <div class="links">
+            <a href="https://github.com/yourrepo" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <h2>Skills</h2>
+      <div class="skills">
+        <div class="skill-card">
+          <h3>Languages</h3>
+          <p>Python, C++, C, C#, MIPS Assembly</p>
+        </div>
+        <div class="skill-card">
+          <h3>Tools</h3>
+          <p>Git/GitHub, VS Code, Visual Studio, Linux/CLI</p>
+        </div>
+        <div class="skill-card">
+          <h3>Topics</h3>
+          <p>OOP, data structures, debugging, basic networking</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <h2>About</h2>
+      <p>
+        I’m a CS student who likes building projects that feel “real”: clean structure, readable code, and useful features.
+        I’m currently looking for internships where I can ship and learn fast.
+      </p>
+    </section>
+
+    <section id="contact" class="section">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> Ryan Chisholm</span>
+      <span class="muted">Built with GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
