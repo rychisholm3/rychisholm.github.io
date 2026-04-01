@@ -4,151 +4,283 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ryan Chisholm | Portfolio</title>
-  <meta name="description" content="Portfolio of Ryan Chisholm — CS projects, experience, and contact." />
+  <meta name="description" content="Portfolio of Ryan Chisholm — computer science student at UC Irvine with experience in software, systems, and Unity development." />
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <header class="container">
-    <nav class="nav">
-      <div class="logo">RC</div>
-      <div class="nav-links">
-        <a href="#projects">Projects</a>
-        <a href="#skills">Skills</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </div>
-    </nav>
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav">
+        <a class="brand" href="#top" aria-label="Ryan Chisholm home">
+          <span class="logo">RC</span>
+          <span class="brand-text">Ryan Chisholm</span>
+        </a>
 
-    <section class="hero">
-      <h1>Ryan Chisholm</h1>
-      <p class="subtitle">
-        ICS student at University of California, Irvine.
-        Interested in <strong>software design</strong>, <strong>intelligent systems</strong>, and <strong>backend</strong>.
-      </p>
+        <div class="nav-links">
+          <a href="#projects">Projects</a>
+          <a href="#experience">Experience</a>
+          <a href="#skills">Skills</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
 
-      <div class="buttons">
-        <a class="btn primary" href="resume.pdf" target="_blank" rel="noopener">Resume</a>
-        <a class="btn" href="https://github.com/rychisholm3" target="_blank" rel="noopener">GitHub</a>
-        <a class="btn" href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
-        <a class="btn" href="mailto:your@email.com">Email</a>
-      </div>
-    </section>
+      <section class="hero" id="top">
+        <p class="eyebrow">Computer Science Student at UC Irvine</p>
+        <h1>Building software that feels clean, useful, and reliable.</h1>
+        <p class="subtitle">
+          I am a Computer Science student specializing in Intelligent Systems with experience in
+          Python, C++, C, Java, C#, Unity, and systems-focused coursework. I enjoy building
+          practical software, debugging tough problems, and turning ideas into working projects.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn primary" href="resume.pdf" target="_blank" rel="noopener">View Resume</a>
+          <a class="btn" href="https://github.com/rychisholm3" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn" href="mailto:rychisholm3@gmail.com">Email Me</a>
+        </div>
+
+        <div class="hero-highlights">
+          <div class="highlight-card">
+            <span class="highlight-label">Focus</span>
+            <strong>Software Engineering</strong>
+            <p>Backend, systems, and application development.</p>
+          </div>
+          <div class="highlight-card">
+            <span class="highlight-label">Coursework</span>
+            <strong>Operating Systems</strong>
+            <p>Data structures, algorithms, computer organization, and software engineering.</p>
+          </div>
+          <div class="highlight-card">
+            <span class="highlight-label">Tools</span>
+            <strong>Git, Linux, Unity</strong>
+            <p>Comfortable working across programming, debugging, and development tools.</p>
+          </div>
+        </div>
+      </section>
+    </div>
   </header>
 
-  <main class="container">
+  <main>
     <section id="projects" class="section">
-      <h2>Projects</h2>
-      <p class="section-note">Passion projects I've built outside of courses.</p>
-
-      <div class="grid">
-        <!-- Project 1 -->
-        <article class="card">
-          <div class="card-top">
-            <h3>Project 1 here(C++)</h3>
-            <span class="tag">C++</span>
-          </div>
-          <p class="desc">
-            Project 1 description here
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Selected Work</p>
+          <h2>Projects</h2>
+          <p class="section-note">
+            A mix of course-driven and independent work that reflects the kind of software I like building.
           </p>
-          <ul>
-            <li>skill 1 learned</li>
-            <li>skill 2 learned</li>
-          </ul>
-          <div class="chips">
-            <span class="chip">course that connects</span>
-            <span class="chip">course that connects</span>
-            <span class="chip">course that connects</span>
-          </div>
-          <div class="links">
-            <a href="https://github.com/rychisholm3/rychisholm.github.io" target="_blank" rel="noopener">GitHub</a>
-          </div>
-        </article>
+        </div>
 
-        <!-- Project 2 -->
-        <article class="card">
-          <div class="card-top">
-            <h3>Connect Four (Python)</h3>
-            <span class="tag">Python</span>
-          </div>
-          <p class="desc">
-            A networked Connect Four game with clean game logic + client/server communication.
-          </p>
-          <ul>
-            <li>Built move validation and win detection</li>
-            <li>Designed a simple text UI for gameplay</li>
-          </ul>
-          <div class="chips">
-            <span class="chip">Sockets</span>
-            <span class="chip">Game Logic</span>
-          </div>
-          <div class="links">
-            <a href="https://github.com/yourrepo" target="_blank" rel="noopener">GitHub</a>
-          </div>
-        </article>
+        <div class="grid cards-2">
+          <article class="card project-card">
+            <div class="card-top">
+              <div>
+                <h3>BORG Interpreter</h3>
+                <p class="card-role">C++</p>
+              </div>
+              <span class="tag">Systems / Parsing</span>
+            </div>
+            <p class="desc">
+              Built an interpreter for a custom language that supports scoped variable declarations,
+              expression evaluation, and command execution.
+            </p>
+            <ul>
+              <li>Implemented variable storage, scope handling, and expression parsing in C++</li>
+              <li>Focused on program correctness, edge-case handling, and readable structure</li>
+              <li>Strengthened understanding of interpreters, execution flow, and debugging</li>
+            </ul>
+            <div class="chips">
+              <span class="chip">C++</span>
+              <span class="chip">Parsing</span>
+              <span class="chip">Debugging</span>
+            </div>
+          </article>
 
-        <!-- Project 3 -->
-        <article class="card">
-          <div class="card-top">
-            <h3>Unity Prototype</h3>
-            <span class="tag">Unity / C#</span>
-          </div>
-          <p class="desc">
-            A small Unity game prototype with UI menus, score tracking, and settings (toggle/slider).
-          </p>
-          <ul>
-            <li>Implemented UI flow (main menu → options → game)</li>
-            <li>Added score system and restart/exit behavior</li>
-          </ul>
-          <div class="chips">
-            <span class="chip">UI</span>
-            <span class="chip">Game Loop</span>
-            <span class="chip">C#</span>
-          </div>
-          <div class="links">
-            <a href="https://github.com/yourrepo" target="_blank" rel="noopener">GitHub</a>
-          </div>
-        </article>
+          <article class="card project-card">
+            <div class="card-top">
+              <div>
+                <h3>Direct Messaging Desktop App</h3>
+                <p class="card-role">Python / Tkinter</p>
+              </div>
+              <span class="tag">Networking</span>
+            </div>
+            <p class="desc">
+              Created a messaging client with a graphical interface that stores conversations,
+              retrieves messages, and supports a clean user workflow.
+            </p>
+            <ul>
+              <li>Built GUI views for contacts, message history, and sending new messages</li>
+              <li>Integrated client-server communication with local profile persistence</li>
+              <li>Improved event-driven programming and application organization in Python</li>
+            </ul>
+            <div class="chips">
+              <span class="chip">Python</span>
+              <span class="chip">Tkinter</span>
+              <span class="chip">Client/Server</span>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <div class="card-top">
+              <div>
+                <h3>Multithreaded Image Processing Pipeline</h3>
+                <p class="card-role">C / POSIX Threads</p>
+              </div>
+              <span class="tag">Operating Systems</span>
+            </div>
+            <p class="desc">
+              Developed a threaded image-processing workflow that distributes jobs safely across workers
+              while tracking progress with shared state.
+            </p>
+            <ul>
+              <li>Used mutexes to coordinate job assignment, shared counters, and thread-safe output</li>
+              <li>Worked with dynamic memory, file traversal, and image loading libraries</li>
+              <li>Practiced concurrency concepts such as synchronization and race-condition prevention</li>
+            </ul>
+            <div class="chips">
+              <span class="chip">C</span>
+              <span class="chip">Threads</span>
+              <span class="chip">Memory Management</span>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <div class="card-top">
+              <div>
+                <h3>Virtual Game Asset Development</h3>
+                <p class="card-role">Unity / C# / Blender</p>
+              </div>
+              <span class="tag">3D Development</span>
+            </div>
+            <p class="desc">
+              Designed and integrated interactive 3D pool-related assets into an existing virtual environment,
+              extending pre-built systems to improve interaction and gameplay feel.
+            </p>
+            <ul>
+              <li>Worked with Unity and C# to add interaction and rendering behavior</li>
+              <li>Helped create 3D assets and fit them into a larger playable environment</li>
+              <li>Gained experience adapting new features to an already existing project structure</li>
+            </ul>
+            <div class="chips">
+              <span class="chip">Unity</span>
+              <span class="chip">C#</span>
+              <span class="chip">Blender</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="section alt-section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Work History</p>
+          <h2>Experience</h2>
+        </div>
+
+        <div class="timeline">
+          <article class="timeline-item">
+            <div class="timeline-head">
+              <div>
+                <h3>Trader Joe's</h3>
+                <p class="card-role">Crew Member</p>
+              </div>
+              <p class="timeline-meta">Santa Ana, CA · July 2025 – Present</p>
+            </div>
+            <ul>
+              <li>Deliver high-quality customer service in a fast-paced retail environment</li>
+              <li>Collaborate with team members to keep store operations efficient and organized</li>
+              <li>Handle high-volume transactions accurately while maintaining customer satisfaction</li>
+              <li>Adapt across cashiering, stocking, and floor support responsibilities</li>
+            </ul>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-head">
+              <div>
+                <h3>Whole Foods Market</h3>
+                <p class="card-role">Customer Service</p>
+              </div>
+              <p class="timeline-meta">Tustin, CA · June 2023 – March 2025</p>
+            </div>
+            <ul>
+              <li>Delivered excellent customer service and resolved issues efficiently</li>
+              <li>Worked closely with team members to maintain smooth daily operations</li>
+              <li>Recognized as Employee of the Month at the state-wide level</li>
+            </ul>
+          </article>
+        </div>
       </div>
     </section>
 
     <section id="skills" class="section">
-      <h2>Skills</h2>
-      <div class="skills">
-        <div class="skill-card">
-          <h3>Languages</h3>
-          <p>Python, C++, C, C#, MIPS Assembly</p>
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Technical Strengths</p>
+          <h2>Skills</h2>
         </div>
-        <div class="skill-card">
-          <h3>Tools</h3>
-          <p>Git/GitHub, VS Code, Visual Studio, Linux/CLI</p>
-        </div>
-        <div class="skill-card">
-          <h3>Topics</h3>
-          <p>OOP, data structures, debugging, basic networking</p>
+
+        <div class="skills-grid">
+          <div class="skill-card">
+            <h3>Languages</h3>
+            <p>Python, C++, C, Java, C#, TypeScript, HTML, CSS, MIPS Assembly</p>
+          </div>
+          <div class="skill-card">
+            <h3>Tools</h3>
+            <p>Git, GitHub, Linux/Unix, Unity, Blender, VS Code, Visual Studio</p>
+          </div>
+          <div class="skill-card">
+            <h3>Core Concepts</h3>
+            <p>Data Structures, Algorithms, OOP, Multithreading, Memory Management, Debugging, Networking Basics</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <h2>About</h2>
-      <p>
-        I’m a CS student who enjoys working on projects that involve problem-solving, debugging, and turning abstract ideas into working systems.
-        I’m currently exploring areas such as systems programming, software engineering, and application development.
-      </p>
+    <section id="about" class="section alt-section">
+      <div class="container narrow">
+        <div class="section-heading">
+          <p class="eyebrow">Background</p>
+          <h2>About Me</h2>
+        </div>
+        <p class="about-text">
+          I am currently pursuing a B.S. in Computer Science at the University of California, Irvine,
+          specializing in Intelligent Systems and expected to graduate in June 2027. Before UCI, I earned
+          an Associate in Science from Irvine Valley College, where I was also on the Dean's List.
+        </p>
+        <p class="about-text">
+          What I enjoy most about programming is solving problems step by step, improving code until it feels
+          cleaner, and building projects that go from a rough idea to something people can actually use.
+          I am especially interested in software engineering, backend development, systems programming, and
+          game or interactive application development. I am specializing in Intelligent Systems at UCI as I have
+          had experience with AI development and learning and I am intriguied to continue that path further.
+        </p>
+      </div>
     </section>
 
     <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p>Email: <a href="mailto:rychisholm3@email.com">rychisholm3@email.com</a></p>
+      <div class="container narrow">
+        <div class="contact-card">
+          <p class="eyebrow">Get In Touch</p>
+          <h2>Contact</h2>
+          <p>
+            I'm always open to internship opportunities, project collaboration, and connecting with people in tech.
+          </p>
+          <div class="contact-links">
+            <a href="mailto:rychisholm3@gmail.com">rychisholm3@gmail.com</a>
+            <span>•</span>
+            <a href="https://github.com/rychisholm3" target="_blank" rel="noopener">github.com/rychisholm3</a>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container footer-inner">
       <span>© <span id="year"></span> Ryan Chisholm</span>
-      <span class="muted">Built with GitHub Pages</span>
-      <span class="muted">Get GitHub Page for this website</span>
+      <span class="muted">Built for GitHub Pages</span>
     </div>
   </footer>
 
