@@ -236,6 +236,23 @@
     .osu-sub-links a:hover { color: rgba(255,255,255,0.62); text-decoration: none; }
     .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
     @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
+    /* ── custom osu! cursor ── */
+    html { cursor: none !important; }
+    #osu-cursor {
+      position: fixed;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 36% 34%, #ffffff, #ffe040 55%, #ffb300);
+      box-shadow:
+        0 0 6px  rgba(255,230,0,1),
+        0 0 14px rgba(255,210,0,0.75),
+        0 0 28px rgba(255,180,0,0.4);
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      will-change: left, top;
+      transition: opacity 0.15s ease;
+    }
     /* ── background canvas ── */
     #osu-bg-canvas {
       position: absolute;
@@ -593,6 +610,62 @@
   </footer>
 
   <script>
+    /* ── osu! custom cursor + trail ── */
+    (function () {
+      if (window.matchMedia('(hover: none)').matches) return; // skip touch
+
+      var dot = document.createElement('div');
+      dot.id = 'osu-cursor';
+      document.body.appendChild(dot);
+
+      var tc = document.createElement('canvas');
+      tc.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:99997;';
+      document.body.appendChild(tc);
+      var ctx = tc.getContext('2d');
+
+      function resize() { tc.width = window.innerWidth; tc.height = window.innerHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var mx = -300, my = -300, visible = false;
+      var trail = [];
+      var LIFE = 420;
+
+      document.addEventListener('mousemove', function (e) {
+        mx = e.clientX; my = e.clientY; visible = true;
+        trail.push({ x: mx, y: my, t: performance.now() });
+      });
+      document.addEventListener('mouseleave', function () { visible = false; });
+      document.addEventListener('mouseenter', function () { visible = true; });
+
+      function frame(now) {
+        requestAnimationFrame(frame);
+
+        dot.style.left = mx + 'px';
+        dot.style.top  = my + 'px';
+        dot.style.opacity = visible ? '1' : '0';
+
+        var cutoff = now - LIFE;
+        while (trail.length && trail[0].t < cutoff) trail.shift();
+
+        ctx.clearRect(0, 0, tc.width, tc.height);
+        for (var i = 0; i < trail.length; i++) {
+          var p = trail[i];
+          var prog = 1 - (now - p.t) / LIFE;
+          if (prog <= 0) continue;
+          var r = 5.5 * prog;
+          var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+          g.addColorStop(0, 'rgba(255,240,90,'  + (prog * 0.85).toFixed(3) + ')');
+          g.addColorStop(1, 'rgba(255,170,0,0)');
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.fillStyle = g;
+          ctx.fill();
+        }
+      }
+      requestAnimationFrame(frame);
+    })();
+
     /* ── osu! hit-circle background canvas ── */
     (function () {
       var canvas = document.getElementById('osu-bg-canvas');
