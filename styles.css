@@ -305,6 +305,16 @@ img {
   font-size: 0.82rem;
 }
 
+.card-actions {
+  margin-top: 1rem;
+}
+
+.card-actions .btn {
+  font-size: 0.85rem;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+}
+
 .timeline {
   display: grid;
   gap: 1rem;

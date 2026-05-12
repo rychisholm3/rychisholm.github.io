@@ -44,18 +44,18 @@
         <div class="hero-highlights">
           <div class="highlight-card">
             <span class="highlight-label">Focus</span>
-            <strong>Software Engineering</strong>
-            <p>Backend, systems, and application development.</p>
+            <strong>AI / Software Engineering</strong>
+            <p>Computer vision, NLP, backend systems, and application development.</p>
           </div>
           <div class="highlight-card">
-            <span class="highlight-label">Coursework</span>
-            <strong>Operating Systems</strong>
-            <p>Data structures, algorithms, computer organization, and software engineering.</p>
+            <span class="highlight-label">Specialization</span>
+            <strong>Intelligent Systems</strong>
+            <p>Machine learning, computer vision, data structures, and systems programming.</p>
           </div>
           <div class="highlight-card">
             <span class="highlight-label">Tools</span>
-            <strong>Git, Linux, Unity</strong>
-            <p>Comfortable working across programming, debugging, and development tools.</p>
+            <strong>Python, FastAPI, YOLOv8</strong>
+            <p>Building AI-powered applications from data pipeline to deployed web interface.</p>
           </div>
         </div>
       </section>
@@ -74,6 +74,65 @@
         </div>
 
         <div class="grid cards-2">
+          <article class="card project-card">
+            <div class="card-top">
+              <div>
+                <h3>SafeSight AI</h3>
+                <p class="card-role">Python / YOLOv8 / FastAPI / React</p>
+              </div>
+              <span class="tag">AI / Computer Vision</span>
+            </div>
+            <p class="desc">
+              Real-time workplace safety monitoring system that detects PPE violations and
+              restricted-zone intrusions from live video feeds using computer vision.
+            </p>
+            <ul>
+              <li>Ingests video from files, webcams, or RTSP streams and runs YOLOv8 inference per frame</li>
+              <li>Tracks each person across frames with ByteTrack so violations debounce to one event per incident</li>
+              <li>Stores events with frame snapshots in SQLite; exposes them via FastAPI REST/WebSocket to a React dashboard</li>
+            </ul>
+            <div class="chips">
+              <span class="chip">Python</span>
+              <span class="chip">YOLOv8</span>
+              <span class="chip">FastAPI</span>
+              <span class="chip">React</span>
+              <span class="chip">OpenCV</span>
+              <span class="chip">SQLite</span>
+            </div>
+            <div class="card-actions">
+              <a class="btn" href="https://github.com/rychisholm3/safesight-ai" target="_blank" rel="noopener">View on GitHub →</a>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <div class="card-top">
+              <div>
+                <h3>AI Resume Screener</h3>
+                <p class="card-role">Python / FastAPI / OpenAI / Streamlit</p>
+              </div>
+              <span class="tag">AI / NLP</span>
+            </div>
+            <p class="desc">
+              Web application that compares and ranks resume PDFs against a job description
+              using AI-powered skill extraction and match scoring.
+            </p>
+            <ul>
+              <li>Accepts multiple resume PDFs and a job description, extracts technical skills via the OpenAI API</li>
+              <li>Scores and ranks candidates by skill alignment with gap analysis and improvement suggestions</li>
+              <li>Streamlit frontend backed by FastAPI; results exportable to CSV</li>
+            </ul>
+            <div class="chips">
+              <span class="chip">Python</span>
+              <span class="chip">FastAPI</span>
+              <span class="chip">OpenAI API</span>
+              <span class="chip">Streamlit</span>
+              <span class="chip">PyPDF2</span>
+            </div>
+            <div class="card-actions">
+              <a class="btn" href="https://github.com/rychisholm3/ai-resume-screener" target="_blank" rel="noopener">View on GitHub →</a>
+            </div>
+          </article>
+
           <article class="card project-card">
             <div class="card-top">
               <div>
@@ -101,30 +160,6 @@
           <article class="card project-card">
             <div class="card-top">
               <div>
-                <h3>Direct Messaging Desktop App</h3>
-                <p class="card-role">Python / Tkinter</p>
-              </div>
-              <span class="tag">Networking</span>
-            </div>
-            <p class="desc">
-              Created a messaging client with a graphical interface that stores conversations,
-              retrieves messages, and supports a clean user workflow.
-            </p>
-            <ul>
-              <li>Built GUI views for contacts, message history, and sending new messages</li>
-              <li>Integrated client-server communication with local profile persistence</li>
-              <li>Improved event-driven programming and application organization in Python</li>
-            </ul>
-            <div class="chips">
-              <span class="chip">Python</span>
-              <span class="chip">Tkinter</span>
-              <span class="chip">Client/Server</span>
-            </div>
-          </article>
-
-          <article class="card project-card">
-            <div class="card-top">
-              <div>
                 <h3>Multithreaded Image Processing Pipeline</h3>
                 <p class="card-role">C / POSIX Threads</p>
               </div>
@@ -146,29 +181,6 @@
             </div>
           </article>
 
-          <article class="card project-card">
-            <div class="card-top">
-              <div>
-                <h3>Virtual Game Asset Development</h3>
-                <p class="card-role">Unity / C# / Blender</p>
-              </div>
-              <span class="tag">3D Development</span>
-            </div>
-            <p class="desc">
-              Designed and integrated interactive 3D pool-related assets into an existing virtual environment,
-              extending pre-built systems to improve interaction and gameplay feel.
-            </p>
-            <ul>
-              <li>Worked with Unity and C# to add interaction and rendering behavior</li>
-              <li>Helped create 3D assets and fit them into a larger playable environment</li>
-              <li>Gained experience adapting new features to an already existing project structure</li>
-            </ul>
-            <div class="chips">
-              <span class="chip">Unity</span>
-              <span class="chip">C#</span>
-              <span class="chip">Blender</span>
-            </div>
-          </article>
         </div>
       </div>
     </section>
@@ -228,12 +240,12 @@
             <p>Python, C++, C, Java, C#, TypeScript, HTML, CSS, MIPS Assembly</p>
           </div>
           <div class="skill-card">
-            <h3>Tools</h3>
-            <p>Git, GitHub, Linux/Unix, Unity, Blender, VS Code, Visual Studio</p>
+            <h3>Tools &amp; Frameworks</h3>
+            <p>Git, GitHub, FastAPI, Streamlit, OpenCV, YOLOv8, OpenAI API, Linux/Unix, Unity, Blender, VS Code</p>
           </div>
           <div class="skill-card">
             <h3>Core Concepts</h3>
-            <p>Data Structures, Algorithms, OOP, Multithreading, Memory Management, Debugging, Networking Basics</p>
+            <p>Machine Learning, Computer Vision, Data Structures, Algorithms, OOP, Multithreading, Memory Management, REST APIs</p>
           </div>
         </div>
       </div>
