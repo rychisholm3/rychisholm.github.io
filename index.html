@@ -83,8 +83,10 @@
       to   { transform: translate(-30px,20px) scale(1.06); }
     }
     .osu-main-cookie {
-      position: relative;
-      z-index: 2;
+      position: fixed;
+      top: calc(50% - 155px);
+      left: calc(50% - 155px);
+      z-index: 100;
       width: 310px; height: 310px;
       border-radius: 50%;
       background:
@@ -98,9 +100,29 @@
       justify-content: center;
       cursor: pointer;
       will-change: transform;
-      transition: box-shadow 0.08s ease;
+      transition: box-shadow 0.08s ease,
+                  top 0.65s cubic-bezier(0.22,1,0.36,1),
+                  left 0.65s cubic-bezier(0.22,1,0.36,1),
+                  width 0.65s cubic-bezier(0.22,1,0.36,1),
+                  height 0.65s cubic-bezier(0.22,1,0.36,1);
       user-select: none;
     }
+    .osu-main-cookie.back-mode {
+      top: calc(100vh - 84px);
+      left: 1.5rem;
+      width: 68px;
+      height: 68px;
+    }
+    .osu-main-cookie.back-mode .osu-main-cookie-inner { display: none; }
+    .osu-back-label {
+      display: none;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      pointer-events: none;
+      line-height: 1;
+    }
+    .osu-main-cookie.back-mode .osu-back-label { display: block; }
     .osu-main-cookie-inner {
       display: flex; flex-direction: column; align-items: center; pointer-events: none;
     }
@@ -193,13 +215,25 @@
     .osu-sub-links a:hover { color: rgba(255,255,255,0.62); text-decoration: none; }
     .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
     @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
-    /* ── section reveal on nav select ── */
-    .osu-section-hidden { display: none; }
-    @keyframes osu-section-in {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* ── sections as full-screen pages ── */
+    main > section {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 50;
+      overflow-y: auto;
+      background:
+        radial-gradient(900px 600px at 15% 0%, rgba(200,70,140,0.08), transparent 60%),
+        linear-gradient(180deg, #0c0a16 0%, #090a12 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      padding-bottom: 5rem;
     }
-    .osu-section-in { animation: osu-section-in 0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
+    main > section.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
     @media (max-width: 640px) {
       .osu-main-cookie { width: 220px; height: 220px; }
       .osu-initials { font-size: 2.9rem; }
@@ -227,6 +261,7 @@
         <span class="osu-initials">RC</span>
         <span class="osu-name-sub">Ryan Chisholm</span>
       </div>
+      <span class="osu-back-label">←</span>
     </div>
 
     <nav class="osu-nav" id="osu-nav" aria-hidden="true">
@@ -530,13 +565,8 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* ── hide all sections on load; reveal via nav clicks ── */
+    /* ── scroll reveal inside active sections ── */
     (function () {
-      document.querySelectorAll('main > section').forEach(function (s) {
-        s.classList.add('osu-section-hidden');
-      });
-
-      /* scroll reveal for manual scrolling after a section is opened */
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
@@ -559,6 +589,9 @@
 
       /* ── menu open/close ── */
       var isOpen = false;
+      var inBackMode = false;
+      var activeSection = null;
+
       function openMenu()  {
         isOpen = true;
         cookie.classList.add('open'); nav.classList.add('open');
@@ -569,31 +602,41 @@
         cookie.classList.remove('open'); nav.classList.remove('open');
         cookie.setAttribute('aria-expanded','false'); nav.setAttribute('aria-hidden','true');
       }
+
+      function openSection(section) {
+        closeMenu();
+        inBackMode = true;
+        cookie.classList.add('back-mode');
+        cookie.setAttribute('aria-label', 'Back to menu');
+        /* wait for cookie to start moving, then fade section in */
+        setTimeout(function () {
+          if (activeSection) activeSection.classList.remove('active');
+          section.classList.add('active');
+          section.scrollTop = 0;
+          activeSection = section;
+          section.querySelectorAll('.reveal').forEach(function (el, i) {
+            setTimeout(function () {
+              el.classList.add('visible');
+              el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
+                bar.style.width = bar.dataset.w + '%';
+              });
+            }, i * 90);
+          });
+        }, 220);
+      }
+
+      function closeSection() {
+        if (activeSection) { activeSection.classList.remove('active'); activeSection = null; }
+        inBackMode = false;
+        cookie.classList.remove('back-mode');
+        cookie.setAttribute('aria-label', 'Open navigation menu');
+      }
+
       nav.querySelectorAll('.osu-nav-btn').forEach(function(btn){
         btn.addEventListener('click', function(){
           var targetId = (btn.getAttribute('href') || '').replace('#','');
-          var targetSection = targetId ? document.getElementById(targetId) : null;
-          if (targetSection) {
-            /* unhide the section if it hasn't been opened yet */
-            if (targetSection.classList.contains('osu-section-hidden')) {
-              targetSection.classList.remove('osu-section-hidden');
-              targetSection.classList.add('osu-section-in');
-            }
-            /* stagger-reveal .reveal items inside */
-            targetSection.querySelectorAll('.reveal').forEach(function(el, i){
-              setTimeout(function(){
-                el.classList.add('visible');
-                el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function(bar){
-                  bar.style.width = bar.dataset.w + '%';
-                });
-              }, i * 90);
-            });
-            /* scroll to it after the animation has a moment to start */
-            setTimeout(function(){
-              targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 60);
-          }
-          setTimeout(closeMenu, 150);
+          var section = targetId ? document.getElementById(targetId) : null;
+          if (section) openSection(section);
         });
       });
       document.addEventListener('click', function(e){
@@ -634,16 +677,17 @@
         requestAnimationFrame(beatLoop);
         t += 0.022;
         var targetScale, targetGlow;
+        var pulse = inBackMode ? 0.25 : 1;
         if (analyser && audioEl && !audioEl.paused) {
           analyser.getByteFrequencyData(dataArray);
           var bass = 0;
           for (var i = 1; i < 10; i++) bass += dataArray[i];
           bass = bass / 9 / 255;
-          targetScale = 1 + bass * 0.2;
+          targetScale = 1 + bass * 0.2 * pulse;
           targetGlow  = 50 + bass * 60;
         } else {
           /* gentle idle sine pulse */
-          targetScale = 1 + Math.sin(t) * 0.028;
+          targetScale = 1 + Math.sin(t) * 0.028 * pulse;
           targetGlow  = 50 + Math.sin(t) * 12;
         }
         curScale = curScale + (targetScale - curScale) * 0.14;
@@ -657,12 +701,17 @@
       }
       beatLoop();
 
-      /* toggle menu on cookie click — music is separate (use ♪ icon) */
+      /* cookie click: back if in section, else open/close menu */
       cookie.addEventListener('click', function(){
+        if (inBackMode) { closeSection(); return; }
         isOpen ? closeMenu() : openMenu();
       });
       cookie.addEventListener('keydown', function(e){
-        if (e.key==='Enter'||e.key===' '){ e.preventDefault(); isOpen?closeMenu():openMenu(); }
+        if (e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          if (inBackMode) { closeSection(); return; }
+          isOpen ? closeMenu() : openMenu();
+        }
       });
 
       /* clicking the ♪ icon toggles mute without touching the menu */
