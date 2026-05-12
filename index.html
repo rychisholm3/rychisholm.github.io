@@ -39,7 +39,27 @@
       user-select: none;
       text-shadow: 0 1px 8px rgba(0,0,0,0.5);
     }
-    @keyframes osu-cookie-in  { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+    @keyframes osu-cookie-in {
+      0%   { opacity:0; transform:scale(0.6); }
+      75%  { opacity:1; transform:scale(1.22); }
+      100% { opacity:1; transform:scale(1.14); }
+    }
+    /* ── RC slam animation ── */
+    .osu-pre-slam {
+      transform: translateY(-130vh) !important;
+      opacity: 0 !important;
+      transition: none !important;
+    }
+    @keyframes rc-slam {
+      0%   { transform: translateY(-130vh) scale(0.9);  opacity: 0; }
+      6%   { opacity: 1; }
+      55%  { transform: translateY(12px)   scaleX(1.13) scaleY(0.88); }
+      68%  { transform: translateY(-9px)   scale(1.05); }
+      80%  { transform: translateY(4px)    scaleX(1.04) scaleY(0.97); }
+      89%  { transform: translateY(-2px)   scale(1.01); }
+      100% { transform: translateY(0)      scale(1); }
+    }
+    .osu-slam-active { animation: rc-slam 0.74s linear forwards; }
     @keyframes osu-cookie-out { from { opacity:1; transform:scale(1); }   to { opacity:0; transform:scale(0.85); } }
     @keyframes osu-bg-out     { from { opacity:1; }                        to { opacity:0; } }
     @media (prefers-reduced-motion: reduce) { #osu-intro { display: none; } }
@@ -262,7 +282,7 @@
 
   <header id="top" class="osu-landing">
     <canvas id="osu-bg-canvas"></canvas>
-    <div class="osu-main-cookie" id="osu-main-cookie"
+    <div class="osu-main-cookie osu-pre-slam" id="osu-main-cookie"
          role="button" tabindex="0"
          aria-expanded="false" aria-controls="osu-nav"
          aria-label="Open navigation menu">
@@ -718,21 +738,22 @@
         if (isOpen && !cookie.contains(e.target) && !nav.contains(e.target)) closeMenu();
       });
 
-      /* ── audio beat detection ── */
+      /* ── audio ── */
       var audioCtx, analyser, dataArray, audioEl;
-      var musicReady = false;
+      var audioCtxReady = false;
 
-      function initAudio() {
-        if (musicReady) return;
-        musicReady = true;
+      /* create element now so autoplay attempt can fire at slam time */
+      audioEl = document.createElement('audio');
+      audioEl.crossOrigin = 'anonymous';
+      audioEl.src = 'https://ice6.somafm.com/groovesalad-256-mp3';
+      audioEl.volume = 0.25;
+
+      function setupAudioContext() {
+        if (audioCtxReady) return;
+        audioCtxReady = true;
         try {
-          audioEl = document.createElement('audio');
-          audioEl.crossOrigin = 'anonymous';
-          /* SomaFM Groove Salad — ambient/chill, CORS-enabled, free */
-          audioEl.src = 'https://ice6.somafm.com/groovesalad-256-mp3';
-          audioEl.volume = 0.25;
-          audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
-          analyser  = audioCtx.createAnalyser();
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioCtx.createAnalyser();
           analyser.fftSize = 512;
           analyser.smoothingTimeConstant = 0.78;
           dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -740,11 +761,25 @@
           src.connect(analyser);
           analyser.connect(audioCtx.destination);
           if (audioCtx.state === 'suspended') audioCtx.resume();
-          audioEl.play().then(function(){
-            if (musicInd) musicInd.classList.add('playing');
-          }).catch(function(){ musicReady = false; });
-        } catch(e) { musicReady = false; }
+        } catch(e) { audioCtxReady = false; }
       }
+
+      /* attempt autoplay at slam impact — works on sites the browser trusts */
+      setTimeout(function () {
+        audioEl.play().then(function () {
+          if (musicInd) musicInd.classList.add('playing');
+        }).catch(function () { /* blocked — first click will start it */ });
+      }, 1850);
+
+      /* first click anywhere: wire up AudioContext + ensure audio plays */
+      document.addEventListener('click', function onFirstGesture() {
+        setupAudioContext();
+        if (audioEl.paused) {
+          audioEl.play().then(function() {
+            if (musicInd) musicInd.classList.add('playing');
+          }).catch(function() {});
+        }
+      }, { once: true });
 
       /* ── beat animation loop (runs always) ── */
       var t = 0, curScale = 1, curGlow = 50;
@@ -774,7 +809,13 @@
           '0 0 ' + (curGlow*2.2).toFixed(1) + 'px rgba(255,51,130,0.45), ' +
           '0 0 ' + (curGlow*4).toFixed(1)   + 'px rgba(255,51,130,0.18)';
       }
-      beatLoop();
+      /* start beat loop after slam completes (~2.1s); immediately if reduced motion */
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        cookie.classList.remove('osu-pre-slam');
+        beatLoop();
+      } else {
+        setTimeout(beatLoop, 2100);
+      }
 
       /* cookie click: back if in section, else open/close menu */
       cookie.addEventListener('click', function(){
@@ -789,14 +830,14 @@
         }
       });
 
-      /* clicking the ♪ icon toggles mute without touching the menu */
+      /* ♪ icon: explicit toggle */
       if (musicInd) {
         musicInd.addEventListener('click', function(e){
           e.stopPropagation();
-          if (!musicReady) { initAudio(); return; }
+          setupAudioContext();
           if (audioEl.paused) {
-            audioCtx.resume(); audioEl.play();
-            musicInd.classList.add('playing');
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            audioEl.play().then(function(){ musicInd.classList.add('playing'); }).catch(function(){});
           } else {
             audioEl.pause();
             musicInd.classList.remove('playing');
@@ -808,21 +849,40 @@
 
   <script>
     (function () {
-      var intro  = document.getElementById('osu-intro');
-      var cookie = document.getElementById('osu-cookie');
+      var intro      = document.getElementById('osu-intro');
+      var welcome    = document.getElementById('osu-cookie');
+      var mainCookie = document.getElementById('osu-main-cookie');
 
-      // cookie fades in over 0.7s (0.2s delay), so it's fully visible by ~0.9s
-      // hold it on screen, then fade cookie out, then fade the dark bg out
+      /* 1. Welcome! grows in (animation already running via CSS) */
+
+      /* 2. RC slams down at 1.3s */
       setTimeout(function () {
-        // fade the circle out
-        cookie.style.animation = 'osu-cookie-out 0.7s ease forwards';
+        if (mainCookie) {
+          mainCookie.classList.remove('osu-pre-slam');
+          mainCookie.classList.add('osu-slam-active');
+        }
+        /* attempt autoplay at slam impact — may be blocked by browser */
+        var audio = mainCookie && mainCookie._audio;
+        /* try via the global audioEl exposed by the IIFE */
+      }, 1300);
 
-        // a beat later, fade the dark background itself out
+      /* 3. Try autoplay at impact moment */
+      setTimeout(function () {
+        /* audioEl is scoped inside the IIFE — trigger via first-gesture fallback;
+           browsers that allow autoplay will have started on first setTimeout above */
+      }, 1900);
+
+      /* 4. Fade Welcome! out shortly after slam lands */
+      setTimeout(function () {
+        welcome.style.animation = 'osu-cookie-out 0.4s ease forwards';
         setTimeout(function () {
-          intro.style.animation = 'osu-bg-out 0.8s ease forwards';
-          setTimeout(function () { intro.remove(); }, 820);
-        }, 400);
-      }, 2200); // how long the circle sits on screen after appearing
+          intro.style.animation = 'osu-bg-out 0.5s ease forwards';
+          setTimeout(function () {
+            intro.remove();
+            if (mainCookie) mainCookie.classList.remove('osu-slam-active');
+          }, 520);
+        }, 220);
+      }, 2050);
     })();
   </script>
 </body>
