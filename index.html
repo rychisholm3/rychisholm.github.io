@@ -43,6 +43,120 @@
     @keyframes osu-cookie-out { from { opacity:1; transform:scale(1); }   to { opacity:0; transform:scale(0.85); } }
     @keyframes osu-bg-out     { from { opacity:1; }                        to { opacity:0; } }
     @media (prefers-reduced-motion: reduce) { #osu-intro { display: none; } }
+
+    /* ── osu! main menu landing ── */
+    .osu-landing {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .osu-main-cookie {
+      position: relative;
+      z-index: 2;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background:
+        repeating-linear-gradient( 60deg, transparent, transparent 9px, rgba(255,255,255,0.032) 9px, rgba(255,255,255,0.032) 18px),
+        repeating-linear-gradient(-60deg, transparent, transparent 9px, rgba(255,255,255,0.032) 9px, rgba(255,255,255,0.032) 18px),
+        radial-gradient(circle at 38% 36%, #ff90c8, #e8005a);
+      border: 6px solid rgba(255,255,255,0.9);
+      box-shadow: 0 0 50px rgba(255,51,130,0.8), 0 0 110px rgba(255,51,130,0.4), 0 0 200px rgba(255,51,130,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      animation: osu-main-pulse 3s ease-in-out infinite;
+      user-select: none;
+    }
+    .osu-main-cookie:hover { transform: scale(1.05); }
+    .osu-main-cookie.open  { animation-play-state: paused; }
+    .osu-main-cookie-inner {
+      display: flex; flex-direction: column; align-items: center; pointer-events: none;
+    }
+    .osu-initials {
+      color: #fff;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 3.2rem; font-weight: 800;
+      letter-spacing: 0.04em; line-height: 1;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.45);
+    }
+    .osu-name-sub {
+      color: rgba(255,255,255,0.82);
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-top: 0.3rem;
+    }
+    /* nav menu */
+    .osu-nav {
+      position: absolute;
+      top: 50%;
+      left: calc(50% + 88px);
+      transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 0.45rem;
+      pointer-events: none;
+    }
+    .osu-nav-btn {
+      display: block;
+      width: 265px;
+      padding: 0.9rem 1.5rem 0.9rem 3.5rem;
+      background: linear-gradient(135deg, rgba(100,68,180,0.88), rgba(58,36,130,0.92));
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      color: #fff;
+      font-family: Inter, system-ui, sans-serif;
+      font-weight: 600; font-size: 1rem; letter-spacing: 0.02em;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      opacity: 0; transform: translateX(20px);
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s ease;
+      pointer-events: none; text-decoration: none;
+    }
+    .osu-nav.open                          { pointer-events: auto; }
+    .osu-nav.open .osu-nav-btn             { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .osu-nav.open .osu-nav-btn:nth-child(1){ transition-delay: 0.00s; }
+    .osu-nav.open .osu-nav-btn:nth-child(2){ transition-delay: 0.05s; }
+    .osu-nav.open .osu-nav-btn:nth-child(3){ transition-delay: 0.10s; }
+    .osu-nav.open .osu-nav-btn:nth-child(4){ transition-delay: 0.15s; }
+    .osu-nav.open .osu-nav-btn:nth-child(5){ transition-delay: 0.20s; }
+    .osu-nav-btn:hover {
+      background: linear-gradient(135deg, rgba(118,85,200,0.93), rgba(76,50,155,0.97));
+      text-decoration: none; transform: translateX(8px) !important;
+    }
+    /* hint & sub-links */
+    .osu-hint {
+      position: absolute; bottom: 3.2rem; left: 50%; transform: translateX(-50%);
+      margin: 0; color: rgba(255,255,255,0.3);
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.73rem; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;
+      opacity: 0; animation: osu-hint-show 1.5s 3.8s ease forwards;
+    }
+    .osu-sub-links {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 0.6rem; white-space: nowrap;
+    }
+    .osu-sub-links a {
+      color: rgba(255,255,255,0.28); font-family: Inter, system-ui, sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.05em; transition: color 0.2s;
+    }
+    .osu-sub-links a:hover { color: rgba(255,255,255,0.62); text-decoration: none; }
+    .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
+    @keyframes osu-main-pulse {
+      0%,100% { box-shadow: 0 0 50px rgba(255,51,130,0.8),  0 0 110px rgba(255,51,130,0.4); }
+      50%      { box-shadow: 0 0 70px rgba(255,51,130,0.95), 0 0 150px rgba(255,51,130,0.55), 0 0 230px rgba(255,51,130,0.2); }
+    }
+    @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
+    @media (max-width: 640px) {
+      .osu-main-cookie { width: 180px; height: 180px; }
+      .osu-initials { font-size: 2.6rem; }
+      .osu-nav { top: calc(50% + 112px); left: 50%; transform: translateX(-50%); }
+      .osu-nav-btn { padding: 0.8rem 1.2rem; width: 240px; text-align: center; }
+      .osu-nav-btn { transform: translateY(-8px); }
+      .osu-nav.open .osu-nav-btn { transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -54,56 +168,33 @@
     </div>
   </div>
 
-  <header class="site-header">
-    <div class="container">
-      <nav class="nav">
-        <a class="brand" href="#top" aria-label="Ryan Chisholm home">
-          <span class="logo">RC</span>
-          <span class="brand-text">Ryan Chisholm</span>
-        </a>
+  <header id="top" class="osu-landing">
+    <div class="osu-main-cookie" id="osu-main-cookie"
+         role="button" tabindex="0"
+         aria-expanded="false" aria-controls="osu-nav"
+         aria-label="Open navigation menu">
+      <div class="osu-main-cookie-inner">
+        <span class="osu-initials">RC</span>
+        <span class="osu-name-sub">Ryan Chisholm</span>
+      </div>
+    </div>
 
-        <div class="nav-links">
-          <a href="#projects">Projects</a>
-          <a href="#experience">Experience</a>
-          <a href="#skills">Skills</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </nav>
+    <nav class="osu-nav" id="osu-nav" aria-hidden="true">
+      <a href="#about"      class="osu-nav-btn">About Me</a>
+      <a href="#projects"   class="osu-nav-btn">Projects</a>
+      <a href="#experience" class="osu-nav-btn">Experience</a>
+      <a href="#skills"     class="osu-nav-btn">Skills</a>
+      <a href="#contact"    class="osu-nav-btn">Contact</a>
+    </nav>
 
-      <section class="hero" id="top">
-        <p class="eyebrow">Computer Science Student at UC Irvine</p>
-        <h1>Building software that feels clean, useful, and reliable.</h1>
-        <p class="subtitle">
-          I am a Computer Science student specializing in Intelligent Systems with experience in
-          Python, C++, C, Java, C#, Unity, and systems-focused coursework. I enjoy building
-          practical software, debugging tough problems, and turning ideas into working projects.
-        </p>
+    <p class="osu-hint" aria-hidden="true">click to navigate</p>
 
-        <div class="hero-actions">
-          <a class="btn primary" href="resume.pdf" target="_blank" rel="noopener">View Resume</a>
-          <a class="btn" href="https://github.com/rychisholm3" target="_blank" rel="noopener">GitHub</a>
-          <a class="btn" href="mailto:rychisholm3@gmail.com">Email Me</a>
-        </div>
-
-        <div class="hero-highlights">
-          <div class="highlight-card">
-            <span class="highlight-label">Focus</span>
-            <strong>AI / Software Engineering</strong>
-            <p>Computer vision, NLP, backend systems, and application development.</p>
-          </div>
-          <div class="highlight-card">
-            <span class="highlight-label">Specialization</span>
-            <strong>Intelligent Systems</strong>
-            <p>Machine learning, computer vision, data structures, and systems programming.</p>
-          </div>
-          <div class="highlight-card">
-            <span class="highlight-label">Tools</span>
-            <strong>Python, FastAPI, YOLOv8</strong>
-            <p>Building AI-powered applications from data pipeline to deployed web interface.</p>
-          </div>
-        </div>
-      </section>
+    <div class="osu-sub-links">
+      <a href="resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+      <span>·</span>
+      <a href="https://github.com/rychisholm3" target="_blank" rel="noopener">GitHub ↗</a>
+      <span>·</span>
+      <a href="mailto:rychisholm3@gmail.com">Email ↗</a>
     </div>
   </header>
 
@@ -344,6 +435,43 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    (function () {
+      var cookie = document.getElementById('osu-main-cookie');
+      var nav    = document.getElementById('osu-nav');
+      if (!cookie || !nav) return;
+      var isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        cookie.classList.add('open');
+        nav.classList.add('open');
+        cookie.setAttribute('aria-expanded', 'true');
+        nav.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        cookie.classList.remove('open');
+        nav.classList.remove('open');
+        cookie.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
+      }
+
+      cookie.addEventListener('click', function () { isOpen ? closeMenu() : openMenu(); });
+
+      cookie.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isOpen ? closeMenu() : openMenu(); }
+      });
+
+      nav.querySelectorAll('.osu-nav-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () { setTimeout(closeMenu, 150); });
+      });
+
+      document.addEventListener('click', function (e) {
+        if (isOpen && !cookie.contains(e.target) && !nav.contains(e.target)) closeMenu();
+      });
+    })();
   </script>
 
   <script>
