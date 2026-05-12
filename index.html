@@ -560,7 +560,23 @@
         cookie.setAttribute('aria-expanded','false'); nav.setAttribute('aria-hidden','true');
       }
       nav.querySelectorAll('.osu-nav-btn').forEach(function(btn){
-        btn.addEventListener('click', function(){ setTimeout(closeMenu, 150); });
+        btn.addEventListener('click', function(){
+          var targetId = (btn.getAttribute('href') || '').replace('#','');
+          var targetSection = targetId ? document.getElementById(targetId) : null;
+          if (targetSection) {
+            /* stagger-reveal every .reveal element inside the section */
+            var items = targetSection.querySelectorAll('.reveal');
+            items.forEach(function(el, i){
+              setTimeout(function(){
+                el.classList.add('visible');
+                el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function(bar){
+                  bar.style.width = bar.dataset.w + '%';
+                });
+              }, i * 90);
+            });
+          }
+          setTimeout(closeMenu, 150);
+        });
       });
       document.addEventListener('click', function(e){
         if (isOpen && !cookie.contains(e.target) && !nav.contains(e.target)) closeMenu();
@@ -623,13 +639,12 @@
       }
       beatLoop();
 
-      /* start music + toggle menu on cookie click */
+      /* toggle menu on cookie click — music is separate (use ♪ icon) */
       cookie.addEventListener('click', function(){
-        initAudio();
         isOpen ? closeMenu() : openMenu();
       });
       cookie.addEventListener('keydown', function(e){
-        if (e.key==='Enter'||e.key===' '){ e.preventDefault(); initAudio(); isOpen?closeMenu():openMenu(); }
+        if (e.key==='Enter'||e.key===' '){ e.preventDefault(); isOpen?closeMenu():openMenu(); }
       });
 
       /* clicking the ♪ icon toggles mute without touching the menu */
