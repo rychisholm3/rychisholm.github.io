@@ -40,26 +40,27 @@
       text-shadow: 0 1px 8px rgba(0,0,0,0.5);
     }
     @keyframes osu-cookie-in {
-      0%   { opacity:0; transform:scale(0.6); }
-      75%  { opacity:1; transform:scale(1.22); }
-      100% { opacity:1; transform:scale(1.14); }
+      0%   { opacity:0; transform:scale(0.72); }
+      60%  { opacity:1; transform:scale(1.18); }
+      80%  { opacity:1; transform:scale(1.12); }
+      100% { opacity:1; transform:scale(1.1);  }
     }
-    /* ── RC slam animation ── */
+    /* ── RC slam: pops in from center ── */
     .osu-pre-slam {
-      transform: translateY(-130vh) !important;
+      transform: scale(0) !important;
       opacity: 0 !important;
       transition: none !important;
     }
     @keyframes rc-slam {
-      0%   { transform: translateY(-130vh) scale(0.9);  opacity: 0; }
-      6%   { opacity: 1; }
-      55%  { transform: translateY(12px)   scaleX(1.13) scaleY(0.88); }
-      68%  { transform: translateY(-9px)   scale(1.05); }
-      80%  { transform: translateY(4px)    scaleX(1.04) scaleY(0.97); }
-      89%  { transform: translateY(-2px)   scale(1.01); }
-      100% { transform: translateY(0)      scale(1); }
+      0%   { transform: scale(0.05); opacity: 0; }
+      18%  { transform: scale(0.85); opacity: 1; }
+      55%  { transform: scale(1.22); }
+      70%  { transform: scale(0.92); }
+      82%  { transform: scale(1.07); }
+      91%  { transform: scale(0.98); }
+      100% { transform: scale(1);    }
     }
-    .osu-slam-active { animation: rc-slam 0.74s linear forwards; }
+    .osu-slam-active { animation: rc-slam 0.52s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
     @keyframes osu-cookie-out { from { opacity:1; transform:scale(1); }   to { opacity:0; transform:scale(0.85); } }
     @keyframes osu-bg-out     { from { opacity:1; }                        to { opacity:0; } }
     @media (prefers-reduced-motion: reduce) { #osu-intro { display: none; } }
@@ -814,7 +815,7 @@
         cookie.classList.remove('osu-pre-slam');
         beatLoop();
       } else {
-        setTimeout(beatLoop, 2100);
+        setTimeout(beatLoop, 1750);
       }
 
       /* cookie click: back if in section, else open/close menu */
@@ -855,34 +856,24 @@
 
       /* 1. Welcome! grows in (animation already running via CSS) */
 
-      /* 2. RC slams down at 1.3s */
+      /* 2. RC pops in at 1.0s — simultaneous with Welcome! starting to fade */
       setTimeout(function () {
         if (mainCookie) {
           mainCookie.classList.remove('osu-pre-slam');
           mainCookie.classList.add('osu-slam-active');
         }
-        /* attempt autoplay at slam impact — may be blocked by browser */
-        var audio = mainCookie && mainCookie._audio;
-        /* try via the global audioEl exposed by the IIFE */
-      }, 1300);
+        /* fade Welcome! out as RC expands over it */
+        welcome.style.animation = 'osu-cookie-out 0.35s ease forwards';
+      }, 1000);
 
-      /* 3. Try autoplay at impact moment */
+      /* 3. Fade the dark overlay out once slam settles (~1.6s) */
       setTimeout(function () {
-        /* audioEl is scoped inside the IIFE — trigger via first-gesture fallback;
-           browsers that allow autoplay will have started on first setTimeout above */
-      }, 1900);
-
-      /* 4. Fade Welcome! out shortly after slam lands */
-      setTimeout(function () {
-        welcome.style.animation = 'osu-cookie-out 0.4s ease forwards';
+        intro.style.animation = 'osu-bg-out 0.55s ease forwards';
         setTimeout(function () {
-          intro.style.animation = 'osu-bg-out 0.5s ease forwards';
-          setTimeout(function () {
-            intro.remove();
-            if (mainCookie) mainCookie.classList.remove('osu-slam-active');
-          }, 520);
-        }, 220);
-      }, 2050);
+          intro.remove();
+          if (mainCookie) mainCookie.classList.remove('osu-slam-active');
+        }, 560);
+      }, 1580);
     })();
   </script>
 </body>
