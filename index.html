@@ -193,6 +193,13 @@
     .osu-sub-links a:hover { color: rgba(255,255,255,0.62); text-decoration: none; }
     .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
     @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
+    /* ── section reveal on nav select ── */
+    .osu-section-hidden { display: none; }
+    @keyframes osu-section-in {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .osu-section-in { animation: osu-section-in 0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
     @media (max-width: 640px) {
       .osu-main-cookie { width: 220px; height: 220px; }
       .osu-initials { font-size: 2.9rem; }
@@ -523,14 +530,17 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* ── scroll reveal + skill bar animation ── */
+    /* ── hide all sections on load; reveal via nav clicks ── */
     (function () {
-      var targets = document.querySelectorAll('.reveal');
+      document.querySelectorAll('main > section').forEach(function (s) {
+        s.classList.add('osu-section-hidden');
+      });
+
+      /* scroll reveal for manual scrolling after a section is opened */
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            /* animate skill bars when their group becomes visible */
             entry.target.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
               bar.style.width = bar.dataset.w + '%';
             });
@@ -538,7 +548,7 @@
           }
         });
       }, { threshold: 0.1 });
-      targets.forEach(function (el) { observer.observe(el); });
+      document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
     })();
 
     (function () {
@@ -564,9 +574,13 @@
           var targetId = (btn.getAttribute('href') || '').replace('#','');
           var targetSection = targetId ? document.getElementById(targetId) : null;
           if (targetSection) {
-            /* stagger-reveal every .reveal element inside the section */
-            var items = targetSection.querySelectorAll('.reveal');
-            items.forEach(function(el, i){
+            /* unhide the section if it hasn't been opened yet */
+            if (targetSection.classList.contains('osu-section-hidden')) {
+              targetSection.classList.remove('osu-section-hidden');
+              targetSection.classList.add('osu-section-in');
+            }
+            /* stagger-reveal .reveal items inside */
+            targetSection.querySelectorAll('.reveal').forEach(function(el, i){
               setTimeout(function(){
                 el.classList.add('visible');
                 el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function(bar){
@@ -574,6 +588,10 @@
                 });
               }, i * 90);
             });
+            /* scroll to it after the animation has a moment to start */
+            setTimeout(function(){
+              targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 60);
           }
           setTimeout(closeMenu, 150);
         });
