@@ -12,12 +12,8 @@
 
   <!-- osu! intro overlay -->
   <div id="osu-intro" aria-hidden="true">
-    <div id="osu-circle-wrap">
-      <div id="osu-approach"></div>
-      <div id="osu-hit">
-        <span>Welcome!</span>
-      </div>
-      <div id="osu-burst"></div>
+    <div id="osu-cookie">
+      <span>Welcome!</span>
     </div>
   </div>
 
@@ -315,27 +311,21 @@
 
   <script>
     (function () {
-      var intro = document.getElementById('osu-intro');
-      var hit   = document.getElementById('osu-hit');
-      var burst = document.getElementById('osu-burst');
+      var intro  = document.getElementById('osu-intro');
+      var cookie = document.getElementById('osu-cookie');
 
-      // approach ring animation starts at 0.15s delay and runs 1.4s → hits at ~1.55s
-      // add a tiny buffer so the burst fires exactly as the ring lands
-      var HIT_TIME = 1600;
-
+      // cookie fades in over 0.7s (0.2s delay), so it's fully visible by ~0.9s
+      // hold it on screen, then fade cookie out, then fade the dark bg out
       setTimeout(function () {
-        // flash the hit circle like a successful click
-        hit.style.animation = 'osu-hit-flash 0.35s ease forwards';
+        // fade the circle out
+        cookie.style.animation = 'osu-cookie-out 0.7s ease forwards';
 
-        // expand the burst ring outward
-        burst.classList.add('active');
-
-        // fade the whole overlay out after the flash settles
+        // a beat later, fade the dark background itself out
         setTimeout(function () {
-          intro.classList.add('fade-out');
-          setTimeout(function () { intro.remove(); }, 850);
-        }, 320);
-      }, HIT_TIME);
+          intro.style.animation = 'osu-bg-out 0.8s ease forwards';
+          setTimeout(function () { intro.remove(); }, 820);
+        }, 400);
+      }, 2200); // how long the circle sits on screen after appearing
     })();
   </script>
 </body>
