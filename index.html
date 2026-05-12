@@ -52,11 +52,40 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      background: #080b10;
+    }
+    .osu-landing::before, .osu-landing::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .osu-landing::before {
+      width: 65vw; height: 55vw;
+      background: rgba(255,51,130,0.14);
+      top: 5%; left: -10%;
+      animation: osu-blob-a 11s ease-in-out infinite alternate;
+    }
+    .osu-landing::after {
+      width: 55vw; height: 55vw;
+      background: rgba(100,48,195,0.11);
+      bottom: 0; right: -8%;
+      animation: osu-blob-b 13s ease-in-out infinite alternate;
+    }
+    @keyframes osu-blob-a {
+      from { transform: translate(0,  0) scale(1);    }
+      to   { transform: translate(40px,-30px) scale(1.08); }
+    }
+    @keyframes osu-blob-b {
+      from { transform: translate(0, 0)   scale(1);    }
+      to   { transform: translate(-30px,20px) scale(1.06); }
     }
     .osu-main-cookie {
       position: relative;
       z-index: 2;
-      width: 220px; height: 220px;
+      width: 280px; height: 280px;
       border-radius: 50%;
       background:
         repeating-linear-gradient( 60deg, transparent, transparent 9px, rgba(255,255,255,0.032) 9px, rgba(255,255,255,0.032) 18px),
@@ -68,12 +97,10 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.2s ease;
-      animation: osu-main-pulse 3s ease-in-out infinite;
+      will-change: transform;
+      transition: box-shadow 0.08s ease;
       user-select: none;
     }
-    .osu-main-cookie:hover { transform: scale(1.05); }
-    .osu-main-cookie.open  { animation-play-state: paused; }
     .osu-main-cookie-inner {
       display: flex; flex-direction: column; align-items: center; pointer-events: none;
     }
@@ -90,11 +117,21 @@
       font-size: 0.6rem; font-weight: 600;
       letter-spacing: 0.14em; text-transform: uppercase; margin-top: 0.3rem;
     }
+    /* music indicator */
+    .osu-music-ind {
+      position: absolute; top: 1.4rem; right: 1.8rem;
+      color: rgba(255,255,255,0.2);
+      font-size: 1rem; cursor: pointer; z-index: 3;
+      transition: color 0.4s ease;
+      user-select: none;
+    }
+    .osu-music-ind.playing { color: rgba(255,175,210,0.7); animation: osu-music-blink 1.4s ease-in-out infinite; }
+    @keyframes osu-music-blink { 0%,100%{opacity:.6} 50%{opacity:1} }
     /* nav menu */
     .osu-nav {
       position: absolute;
       top: 50%;
-      left: calc(50% + 88px);
+      left: calc(50% + 118px);
       transform: translateY(-50%);
       display: flex; flex-direction: column; gap: 0.45rem;
       pointer-events: none;
@@ -144,17 +181,12 @@
     }
     .osu-sub-links a:hover { color: rgba(255,255,255,0.62); text-decoration: none; }
     .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
-    @keyframes osu-main-pulse {
-      0%,100% { box-shadow: 0 0 50px rgba(255,51,130,0.8),  0 0 110px rgba(255,51,130,0.4); }
-      50%      { box-shadow: 0 0 70px rgba(255,51,130,0.95), 0 0 150px rgba(255,51,130,0.55), 0 0 230px rgba(255,51,130,0.2); }
-    }
     @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
     @media (max-width: 640px) {
-      .osu-main-cookie { width: 180px; height: 180px; }
-      .osu-initials { font-size: 2.6rem; }
-      .osu-nav { top: calc(50% + 112px); left: 50%; transform: translateX(-50%); }
-      .osu-nav-btn { padding: 0.8rem 1.2rem; width: 240px; text-align: center; }
-      .osu-nav-btn { transform: translateY(-8px); }
+      .osu-main-cookie { width: 200px; height: 200px; }
+      .osu-initials { font-size: 2.8rem; }
+      .osu-nav { top: calc(50% + 118px); left: 50%; transform: translateX(-50%); }
+      .osu-nav-btn { padding: 0.8rem 1.2rem; width: 240px; text-align: center; transform: translateY(-8px); }
       .osu-nav.open .osu-nav-btn { transform: translateY(0); }
     }
   </style>
@@ -188,6 +220,7 @@
     </nav>
 
     <p class="osu-hint" aria-hidden="true">click to navigate</p>
+    <div id="osu-music-ind" class="osu-music-ind" title="music">♪</div>
 
     <div class="osu-sub-links">
       <a href="resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
@@ -437,40 +470,109 @@
     document.getElementById("year").textContent = new Date().getFullYear();
 
     (function () {
-      var cookie = document.getElementById('osu-main-cookie');
-      var nav    = document.getElementById('osu-nav');
+      var cookie    = document.getElementById('osu-main-cookie');
+      var nav       = document.getElementById('osu-nav');
+      var musicInd  = document.getElementById('osu-music-ind');
       if (!cookie || !nav) return;
+
+      /* ── menu open/close ── */
       var isOpen = false;
-
-      function openMenu() {
+      function openMenu()  {
         isOpen = true;
-        cookie.classList.add('open');
-        nav.classList.add('open');
-        cookie.setAttribute('aria-expanded', 'true');
-        nav.setAttribute('aria-hidden', 'false');
+        cookie.classList.add('open'); nav.classList.add('open');
+        cookie.setAttribute('aria-expanded','true'); nav.setAttribute('aria-hidden','false');
       }
-
       function closeMenu() {
         isOpen = false;
-        cookie.classList.remove('open');
-        nav.classList.remove('open');
-        cookie.setAttribute('aria-expanded', 'false');
-        nav.setAttribute('aria-hidden', 'true');
+        cookie.classList.remove('open'); nav.classList.remove('open');
+        cookie.setAttribute('aria-expanded','false'); nav.setAttribute('aria-hidden','true');
       }
-
-      cookie.addEventListener('click', function () { isOpen ? closeMenu() : openMenu(); });
-
-      cookie.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isOpen ? closeMenu() : openMenu(); }
+      nav.querySelectorAll('.osu-nav-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){ setTimeout(closeMenu, 150); });
       });
-
-      nav.querySelectorAll('.osu-nav-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () { setTimeout(closeMenu, 150); });
-      });
-
-      document.addEventListener('click', function (e) {
+      document.addEventListener('click', function(e){
         if (isOpen && !cookie.contains(e.target) && !nav.contains(e.target)) closeMenu();
       });
+
+      /* ── audio beat detection ── */
+      var audioCtx, analyser, dataArray, audioEl;
+      var musicReady = false;
+
+      function initAudio() {
+        if (musicReady) return;
+        musicReady = true;
+        try {
+          audioEl = document.createElement('audio');
+          audioEl.crossOrigin = 'anonymous';
+          /* SomaFM Groove Salad — ambient/chill, CORS-enabled, free */
+          audioEl.src = 'https://ice6.somafm.com/groovesalad-256-mp3';
+          audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+          analyser  = audioCtx.createAnalyser();
+          analyser.fftSize = 512;
+          analyser.smoothingTimeConstant = 0.78;
+          dataArray = new Uint8Array(analyser.frequencyBinCount);
+          var src = audioCtx.createMediaElementSource(audioEl);
+          src.connect(analyser);
+          analyser.connect(audioCtx.destination);
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          audioEl.play().then(function(){
+            if (musicInd) musicInd.classList.add('playing');
+          }).catch(function(){ musicReady = false; });
+        } catch(e) { musicReady = false; }
+      }
+
+      /* ── beat animation loop (runs always) ── */
+      var t = 0, curScale = 1, curGlow = 50;
+      function beatLoop() {
+        requestAnimationFrame(beatLoop);
+        t += 0.022;
+        var targetScale, targetGlow;
+        if (analyser && audioEl && !audioEl.paused) {
+          analyser.getByteFrequencyData(dataArray);
+          var bass = 0;
+          for (var i = 1; i < 10; i++) bass += dataArray[i];
+          bass = bass / 9 / 255;
+          targetScale = 1 + bass * 0.2;
+          targetGlow  = 50 + bass * 60;
+        } else {
+          /* gentle idle sine pulse */
+          targetScale = 1 + Math.sin(t) * 0.028;
+          targetGlow  = 50 + Math.sin(t) * 12;
+        }
+        curScale = curScale + (targetScale - curScale) * 0.14;
+        curGlow  = curGlow  + (targetGlow  - curGlow)  * 0.14;
+        var g = curGlow.toFixed(1);
+        cookie.style.transform  = 'scale(' + curScale.toFixed(4) + ')';
+        cookie.style.boxShadow  =
+          '0 0 ' + g + 'px rgba(255,51,130,0.85), ' +
+          '0 0 ' + (curGlow*2.2).toFixed(1) + 'px rgba(255,51,130,0.45), ' +
+          '0 0 ' + (curGlow*4).toFixed(1)   + 'px rgba(255,51,130,0.18)';
+      }
+      beatLoop();
+
+      /* start music + toggle menu on cookie click */
+      cookie.addEventListener('click', function(){
+        initAudio();
+        isOpen ? closeMenu() : openMenu();
+      });
+      cookie.addEventListener('keydown', function(e){
+        if (e.key==='Enter'||e.key===' '){ e.preventDefault(); initAudio(); isOpen?closeMenu():openMenu(); }
+      });
+
+      /* clicking the ♪ icon toggles mute without touching the menu */
+      if (musicInd) {
+        musicInd.addEventListener('click', function(e){
+          e.stopPropagation();
+          if (!musicReady) { initAudio(); return; }
+          if (audioEl.paused) {
+            audioCtx.resume(); audioEl.play();
+            musicInd.classList.add('playing');
+          } else {
+            audioEl.pause();
+            musicInd.classList.remove('playing');
+          }
+        });
+      }
     })();
   </script>
 
