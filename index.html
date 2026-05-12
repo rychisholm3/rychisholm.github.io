@@ -85,7 +85,7 @@
     .osu-main-cookie {
       position: relative;
       z-index: 2;
-      width: 280px; height: 280px;
+      width: 310px; height: 310px;
       border-radius: 50%;
       background:
         repeating-linear-gradient( 60deg, transparent, transparent 9px, rgba(255,255,255,0.032) 9px, rgba(255,255,255,0.032) 18px),
@@ -131,25 +131,31 @@
     .osu-nav {
       position: absolute;
       top: 50%;
-      left: calc(50% + 118px);
+      left: calc(50% + 133px);
       transform: translateY(-50%);
       display: flex; flex-direction: column; gap: 0.45rem;
       pointer-events: none;
     }
     .osu-nav-btn {
       display: block;
-      width: 265px;
-      padding: 0.9rem 1.5rem 0.9rem 3.5rem;
-      background: linear-gradient(135deg, rgba(100,68,180,0.88), rgba(58,36,130,0.92));
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 14px;
+      width: 295px;
+      padding: 1.1rem 1.6rem 1.1rem 4rem;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 55%),
+        linear-gradient(135deg, rgba(108,72,192,0.9), rgba(60,36,140,0.95));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-left: 3px solid rgba(255,100,175,0.45);
+      border-radius: 18px;
       color: #fff;
       font-family: Inter, system-ui, sans-serif;
-      font-weight: 600; font-size: 1rem; letter-spacing: 0.02em;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      font-weight: 700; font-size: 1.05rem; letter-spacing: 0.03em;
+      backdrop-filter: blur(16px);
+      box-shadow:
+        0 6px 28px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -1px 0 rgba(0,0,0,0.2);
       opacity: 0; transform: translateX(20px);
-      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.25s ease, border-left-color 0.25s ease;
       pointer-events: none; text-decoration: none;
     }
     .osu-nav.open                          { pointer-events: auto; }
@@ -160,8 +166,13 @@
     .osu-nav.open .osu-nav-btn:nth-child(4){ transition-delay: 0.15s; }
     .osu-nav.open .osu-nav-btn:nth-child(5){ transition-delay: 0.20s; }
     .osu-nav-btn:hover {
-      background: linear-gradient(135deg, rgba(118,85,200,0.93), rgba(76,50,155,0.97));
-      text-decoration: none; transform: translateX(8px) !important;
+      border-left-color: rgba(255,100,175,0.9);
+      box-shadow:
+        0 6px 32px rgba(0,0,0,0.5),
+        0 0 22px rgba(255,78,154,0.32),
+        0 0 55px rgba(255,78,154,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+      text-decoration: none; transform: translateX(10px) !important;
     }
     /* hint & sub-links */
     .osu-hint {
@@ -183,10 +194,10 @@
     .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
     @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
     @media (max-width: 640px) {
-      .osu-main-cookie { width: 200px; height: 200px; }
-      .osu-initials { font-size: 2.8rem; }
-      .osu-nav { top: calc(50% + 118px); left: 50%; transform: translateX(-50%); }
-      .osu-nav-btn { padding: 0.8rem 1.2rem; width: 240px; text-align: center; transform: translateY(-8px); }
+      .osu-main-cookie { width: 220px; height: 220px; }
+      .osu-initials { font-size: 2.9rem; }
+      .osu-nav { top: calc(50% + 128px); left: 50%; transform: translateX(-50%); }
+      .osu-nav-btn { padding: 0.85rem 1.2rem 0.85rem 1.5rem; width: 260px; text-align: center; transform: translateY(-8px); }
       .osu-nav.open .osu-nav-btn { transform: translateY(0); }
     }
   </style>
@@ -468,6 +479,21 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    /* ── scroll reveal ── */
+    (function () {
+      var targets = document.querySelectorAll('.card, .timeline-item, .skill-card, .contact-card, .about-text, .section-heading');
+      targets.forEach(function (el) { el.classList.add('reveal'); });
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      targets.forEach(function (el) { observer.observe(el); });
+    })();
 
     (function () {
       var cookie    = document.getElementById('osu-main-cookie');
