@@ -536,3 +536,542 @@ img {
 @media (prefers-reduced-motion: reduce) {
   #osu-intro { display: none; }
 }
+
+/* ══════════════════════════════════════════════════
+   osu! SECTION COMPONENTS
+   ══════════════════════════════════════════════════ */
+
+/* ── Projects: beatmap select ── */
+.osu-beatmap-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.8rem;
+}
+
+.osu-bm-card {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255, 78, 154, 0.12);
+  border-radius: 18px;
+  background: rgba(15, 12, 28, 0.85);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.osu-bm-card:hover {
+  border-color: rgba(255, 78, 154, 0.4);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.45), 0 0 30px rgba(255,78,154,0.14), 0 0 70px rgba(255,78,154,0.07);
+  transform: translateY(-2px);
+}
+
+.osu-bm-thumb {
+  flex-shrink: 0;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.osu-bm-icon {
+  font-size: 2rem;
+  color: rgba(255,255,255,0.65);
+  text-shadow: 0 0 14px rgba(255,255,255,0.3);
+}
+
+.osu-bm-info {
+  flex: 1;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.osu-bm-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.osu-bm-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.osu-bm-creator {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.osu-bm-tag {
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 78, 154, 0.3);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  color: rgba(255, 175, 210, 0.85);
+  font-size: 0.78rem;
+  background: rgba(255, 78, 154, 0.08);
+  white-space: nowrap;
+}
+
+.osu-bm-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.osu-bm-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.osu-bm-diffs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.osu-diff {
+  border-radius: 6px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: 0.03em;
+}
+
+.osu-bm-play {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 78, 154, 0.35);
+  background: rgba(255, 78, 154, 0.1);
+  color: rgba(255, 185, 215, 0.9);
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.osu-bm-play:hover {
+  background: rgba(255, 78, 154, 0.2);
+  border-color: rgba(255, 78, 154, 0.65);
+  box-shadow: 0 0 18px rgba(255,78,154,0.25);
+  text-decoration: none;
+}
+
+/* ── Experience: activity feed ── */
+.osu-activity-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.8rem;
+}
+
+.osu-activity-item {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.35rem;
+  border: 1px solid rgba(255, 78, 154, 0.12);
+  border-radius: 18px;
+  background: rgba(15, 12, 28, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.osu-activity-item:hover {
+  border-color: rgba(255, 78, 154, 0.35);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.4), 0 0 28px rgba(255,78,154,0.12);
+  transform: translateY(-2px);
+}
+
+.osu-activity-rank {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: 2px solid currentColor;
+}
+
+.rank-s {
+  color: #ffcc22;
+  background: rgba(255, 204, 34, 0.1);
+  box-shadow: 0 0 16px rgba(255,204,34,0.22);
+}
+
+.rank-a {
+  color: #44cc44;
+  background: rgba(68, 204, 68, 0.1);
+  box-shadow: 0 0 16px rgba(68,204,68,0.18);
+}
+
+.osu-activity-body {
+  flex: 1;
+}
+
+.osu-activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.osu-activity-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.osu-activity-role {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.osu-activity-date {
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.osu-activity-bullets {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.osu-activity-bullets li {
+  margin-bottom: 0.4rem;
+}
+
+/* ── Skills: stat bars ── */
+.osu-skills-layout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.8rem;
+}
+
+.osu-skill-group {
+  padding: 1.3rem;
+  border: 1px solid rgba(255, 78, 154, 0.12);
+  border-radius: 18px;
+  background: rgba(15, 12, 28, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.osu-skill-group:hover {
+  border-color: rgba(255, 78, 154, 0.32);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.4), 0 0 28px rgba(255,78,154,0.1);
+  transform: translateY(-2px);
+}
+
+.osu-skill-group-title {
+  margin: 0 0 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--osu-pink);
+}
+
+.osu-skill-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.osu-skill-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.osu-sb-label {
+  flex-shrink: 0;
+  width: 120px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.osu-sb-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.osu-sb-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,78,154,0.9), rgba(120,80,220,0.85));
+  box-shadow: 0 0 8px rgba(255,78,154,0.4);
+  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.osu-concept-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.osu-concept {
+  border: 1px solid rgba(255, 78, 154, 0.22);
+  border-radius: 10px;
+  padding: 0.35rem 0.7rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  background: rgba(255, 78, 154, 0.05);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.osu-concept:hover {
+  border-color: rgba(255, 78, 154, 0.5);
+  color: rgba(255, 185, 215, 0.9);
+}
+
+/* ── About: profile card ── */
+.osu-profile-card {
+  border: 1px solid rgba(255, 78, 154, 0.15);
+  border-radius: 22px;
+  background: rgba(15, 12, 28, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  padding: 2rem;
+}
+
+.osu-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.osu-profile-avatar {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%, #ff90c8, #e8005a);
+  border: 3px solid rgba(255,255,255,0.7);
+  box-shadow: 0 0 24px rgba(255,78,154,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+
+.osu-profile-name {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.osu-profile-title {
+  margin: 0.2rem 0 0;
+  color: var(--osu-pink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.osu-profile-school {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.osu-profile-stats-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.2rem 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.osu-profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.osu-ps-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.osu-ps-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.osu-profile-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.05);
+  margin: 1.2rem 0;
+}
+
+.osu-profile-bio {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 72ch;
+}
+
+/* ── Contact: DM panel ── */
+.osu-dm-card {
+  border: 1px solid rgba(255, 78, 154, 0.15);
+  border-radius: 22px;
+  background: rgba(15, 12, 28, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  padding: 2rem;
+}
+
+.osu-dm-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.osu-dm-avatar {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%, #ff90c8, #e8005a);
+  border: 2px solid rgba(255,255,255,0.65);
+  box-shadow: 0 0 18px rgba(255,78,154,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.osu-dm-title {
+  margin: 0.1rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.osu-dm-sub {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 55ch;
+}
+
+.osu-dm-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.osu-dm-btn {
+  display: block;
+  padding: 0.85rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 78, 154, 0.2);
+  background: rgba(255, 78, 154, 0.04);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.osu-dm-btn:hover {
+  background: rgba(255, 78, 154, 0.1);
+  border-color: rgba(255, 78, 154, 0.45);
+  box-shadow: 0 0 18px rgba(255,78,154,0.15);
+  text-decoration: none;
+}
+
+.osu-dm-primary {
+  background: linear-gradient(135deg, rgba(255,78,154,0.25), rgba(120,60,200,0.2));
+  border-color: rgba(255, 78, 154, 0.4);
+  color: rgba(255, 200, 225, 0.95);
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(255,78,154,0.12);
+}
+
+.osu-dm-primary:hover {
+  background: linear-gradient(135deg, rgba(255,78,154,0.38), rgba(120,60,200,0.3));
+  border-color: rgba(255, 78, 154, 0.7);
+  box-shadow: 0 0 28px rgba(255,78,154,0.28);
+}
+
+/* ── responsive tweaks for osu sections ── */
+@media (max-width: 920px) {
+  .osu-skills-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .osu-bm-card {
+    flex-direction: column;
+  }
+  .osu-bm-thumb {
+    width: 100%;
+    height: 70px;
+  }
+  .osu-bm-top {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .osu-activity-item {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .osu-activity-header {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .osu-activity-date {
+    white-space: normal;
+  }
+  .osu-profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .osu-sb-label {
+    width: 90px;
+  }
+}

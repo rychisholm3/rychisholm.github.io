@@ -243,121 +243,111 @@
   </header>
 
   <main>
+
+    <!-- PROJECTS — beatmap select -->
     <section id="projects" class="section">
       <div class="container">
         <div class="section-heading">
-          <p class="eyebrow"></p>
+          <p class="eyebrow">Song Select</p>
           <h2>Projects</h2>
-          <p class="section-note">
-            A mix of course-driven and independent work that reflects the kind of software I like building.
-          </p>
+          <p class="section-note">Select a beatmap to view the repository.</p>
         </div>
+        <div class="osu-beatmap-list">
 
-        <div class="grid cards-2">
-          <article class="card project-card">
-            <div class="card-top">
-              <div>
-                <h3>SafeSight AI</h3>
-                <p class="card-role">Python / YOLOv8 / FastAPI / React</p>
+          <article class="osu-bm-card reveal">
+            <div class="osu-bm-thumb" style="background:linear-gradient(160deg,#2a0845,#8822cc)">
+              <span class="osu-bm-icon">◉</span>
+            </div>
+            <div class="osu-bm-info">
+              <div class="osu-bm-top">
+                <div>
+                  <h3 class="osu-bm-title">SafeSight AI</h3>
+                  <p class="osu-bm-creator">Python · YOLOv8 · FastAPI · React · OpenCV</p>
+                </div>
+                <span class="osu-bm-tag">AI / Computer Vision</span>
               </div>
-              <span class="tag">AI / Computer Vision</span>
-            </div>
-            <p class="desc">
-              Real-time workplace safety monitoring system that detects PPE violations and
-              restricted-zone intrusions from live video feeds using computer vision.
-            </p>
-            <ul>
-              <li>Ingests video from files, webcams, or RTSP streams and runs YOLOv8 inference per frame</li>
-              <li>Tracks each person across frames with ByteTrack so violations debounce to one event per incident</li>
-              <li>Stores events with frame snapshots in SQLite; exposes them via FastAPI REST/WebSocket to a React dashboard</li>
-            </ul>
-            <div class="chips">
-              <span class="chip">Python</span>
-              <span class="chip">YOLOv8</span>
-              <span class="chip">FastAPI</span>
-              <span class="chip">React</span>
-              <span class="chip">OpenCV</span>
-              <span class="chip">SQLite</span>
-            </div>
-            <div class="card-actions">
-              <a class="btn" href="https://github.com/rychisholm3/safesight-ai" target="_blank" rel="noopener">View on GitHub →</a>
+              <p class="osu-bm-desc">Real-time workplace safety monitoring that detects PPE violations and restricted-zone intrusions from live video using per-person computer vision tracking.</p>
+              <div class="osu-bm-footer">
+                <div class="osu-bm-diffs">
+                  <span class="osu-diff" style="background:rgba(255,78,154,0.85)">Python</span>
+                  <span class="osu-diff" style="background:rgba(110,55,200,0.85)">YOLOv8</span>
+                  <span class="osu-diff" style="background:rgba(50,110,220,0.85)">FastAPI</span>
+                  <span class="osu-diff" style="background:rgba(30,170,150,0.85)">React</span>
+                  <span class="osu-diff" style="background:rgba(60,140,60,0.85)">OpenCV</span>
+                </div>
+                <a class="osu-bm-play" href="https://github.com/rychisholm3/safesight-ai" target="_blank" rel="noopener">▶ View</a>
+              </div>
             </div>
           </article>
 
-          <article class="card project-card">
-            <div class="card-top">
-              <div>
-                <h3>AI Resume Screener</h3>
-                <p class="card-role">Python / FastAPI / OpenAI / Streamlit</p>
+          <article class="osu-bm-card reveal">
+            <div class="osu-bm-thumb" style="background:linear-gradient(160deg,#0a2845,#1155cc)">
+              <span class="osu-bm-icon">◎</span>
+            </div>
+            <div class="osu-bm-info">
+              <div class="osu-bm-top">
+                <div>
+                  <h3 class="osu-bm-title">AI Resume Screener</h3>
+                  <p class="osu-bm-creator">Python · FastAPI · OpenAI API · Streamlit</p>
+                </div>
+                <span class="osu-bm-tag">AI / NLP</span>
               </div>
-              <span class="tag">AI / NLP</span>
-            </div>
-            <p class="desc">
-              Web application that compares and ranks resume PDFs against a job description
-              using AI-powered skill extraction and match scoring.
-            </p>
-            <ul>
-              <li>Accepts multiple resume PDFs and a job description, extracts technical skills via the OpenAI API</li>
-              <li>Scores and ranks candidates by skill alignment with gap analysis and improvement suggestions</li>
-              <li>Streamlit frontend backed by FastAPI; results exportable to CSV</li>
-            </ul>
-            <div class="chips">
-              <span class="chip">Python</span>
-              <span class="chip">FastAPI</span>
-              <span class="chip">OpenAI API</span>
-              <span class="chip">Streamlit</span>
-              <span class="chip">PyPDF2</span>
-            </div>
-            <div class="card-actions">
-              <a class="btn" href="https://github.com/rychisholm3/ai-resume-screener" target="_blank" rel="noopener">View on GitHub →</a>
+              <p class="osu-bm-desc">Web app that ranks resume PDFs against a job description using AI-powered skill extraction, gap analysis, match scoring, and CSV export.</p>
+              <div class="osu-bm-footer">
+                <div class="osu-bm-diffs">
+                  <span class="osu-diff" style="background:rgba(255,78,154,0.85)">Python</span>
+                  <span class="osu-diff" style="background:rgba(50,110,220,0.85)">FastAPI</span>
+                  <span class="osu-diff" style="background:rgba(30,170,150,0.85)">OpenAI</span>
+                  <span class="osu-diff" style="background:rgba(180,100,30,0.85)">Streamlit</span>
+                </div>
+                <a class="osu-bm-play" href="https://github.com/rychisholm3/ai-resume-screener" target="_blank" rel="noopener">▶ View</a>
+              </div>
             </div>
           </article>
 
-          <article class="card project-card">
-            <div class="card-top">
-              <div>
-                <h3>BORG Interpreter</h3>
-                <p class="card-role">C++</p>
-              </div>
-              <span class="tag">Systems / Parsing</span>
+          <article class="osu-bm-card reveal">
+            <div class="osu-bm-thumb" style="background:linear-gradient(160deg,#1a1000,#664400)">
+              <span class="osu-bm-icon">⬡</span>
             </div>
-            <p class="desc">
-              Built an interpreter for a custom language that supports scoped variable declarations,
-              expression evaluation, and command execution.
-            </p>
-            <ul>
-              <li>Implemented variable storage, scope handling, and expression parsing in C++</li>
-              <li>Focused on program correctness, edge-case handling, and readable structure</li>
-              <li>Strengthened understanding of interpreters, execution flow, and debugging</li>
-            </ul>
-            <div class="chips">
-              <span class="chip">C++</span>
-              <span class="chip">Parsing</span>
-              <span class="chip">Debugging</span>
+            <div class="osu-bm-info">
+              <div class="osu-bm-top">
+                <div>
+                  <h3 class="osu-bm-title">BORG Interpreter</h3>
+                  <p class="osu-bm-creator">C++ · Scoped Parsing · Expression Evaluation</p>
+                </div>
+                <span class="osu-bm-tag">Systems / Parsing</span>
+              </div>
+              <p class="osu-bm-desc">Interpreter for a custom language with scoped variable declarations, expression evaluation, and command execution — built from scratch in C++.</p>
+              <div class="osu-bm-footer">
+                <div class="osu-bm-diffs">
+                  <span class="osu-diff" style="background:rgba(200,120,30,0.85)">C++</span>
+                  <span class="osu-diff" style="background:rgba(160,80,20,0.85)">Parsing</span>
+                  <span class="osu-diff" style="background:rgba(130,60,15,0.85)">Debugging</span>
+                </div>
+              </div>
             </div>
           </article>
 
-          <article class="card project-card">
-            <div class="card-top">
-              <div>
-                <h3>Multithreaded Image Processing Pipeline</h3>
-                <p class="card-role">C / POSIX Threads</p>
-              </div>
-              <span class="tag">Operating Systems</span>
+          <article class="osu-bm-card reveal">
+            <div class="osu-bm-thumb" style="background:linear-gradient(160deg,#001a30,#003d66)">
+              <span class="osu-bm-icon">⊕</span>
             </div>
-            <p class="desc">
-              Developed a threaded image-processing workflow that distributes jobs safely across workers
-              while tracking progress with shared state.
-            </p>
-            <ul>
-              <li>Used mutexes to coordinate job assignment, shared counters, and thread-safe output</li>
-              <li>Worked with dynamic memory, file traversal, and image loading libraries</li>
-              <li>Practiced concurrency concepts such as synchronization and race-condition prevention</li>
-            </ul>
-            <div class="chips">
-              <span class="chip">C</span>
-              <span class="chip">Threads</span>
-              <span class="chip">Memory Management</span>
+            <div class="osu-bm-info">
+              <div class="osu-bm-top">
+                <div>
+                  <h3 class="osu-bm-title">Multithreaded Image Pipeline</h3>
+                  <p class="osu-bm-creator">C · POSIX Threads · Mutex Synchronization</p>
+                </div>
+                <span class="osu-bm-tag">Operating Systems</span>
+              </div>
+              <p class="osu-bm-desc">Threaded image-processing workflow distributing jobs across workers with mutex coordination, shared state tracking, and race-condition prevention.</p>
+              <div class="osu-bm-footer">
+                <div class="osu-bm-diffs">
+                  <span class="osu-diff" style="background:rgba(30,100,180,0.85)">C</span>
+                  <span class="osu-diff" style="background:rgba(20,80,150,0.85)">Threads</span>
+                  <span class="osu-diff" style="background:rgba(15,65,130,0.85)">Memory</span>
+                </div>
+              </div>
             </div>
           </article>
 
@@ -365,109 +355,162 @@
       </div>
     </section>
 
+    <!-- EXPERIENCE — osu! activity feed -->
     <section id="experience" class="section alt-section">
       <div class="container">
         <div class="section-heading">
-          <p class="eyebrow">Work History</p>
+          <p class="eyebrow">Recent Activity</p>
           <h2>Experience</h2>
         </div>
+        <div class="osu-activity-list">
 
-        <div class="timeline">
-          <article class="timeline-item">
-            <div class="timeline-head">
-              <div>
-                <h3>Trader Joe's</h3>
-                <p class="card-role">Crew Member</p>
+          <div class="osu-activity-item reveal">
+            <div class="osu-activity-rank rank-s">S</div>
+            <div class="osu-activity-body">
+              <div class="osu-activity-header">
+                <h3>Trader Joe's <span class="osu-activity-role">— Crew Member</span></h3>
+                <span class="osu-activity-date">July 2025 – Present · Santa Ana, CA</span>
               </div>
-              <p class="timeline-meta">Santa Ana, CA · July 2025 – Present</p>
+              <ul class="osu-activity-bullets">
+                <li>Deliver high-quality customer service in a fast-paced retail environment</li>
+                <li>Collaborate with team members to keep store operations efficient and organized</li>
+                <li>Handle high-volume transactions accurately while maintaining customer satisfaction</li>
+                <li>Adapt across cashiering, stocking, and floor support responsibilities</li>
+              </ul>
             </div>
-            <ul>
-              <li>Deliver high-quality customer service in a fast-paced retail environment</li>
-              <li>Collaborate with team members to keep store operations efficient and organized</li>
-              <li>Handle high-volume transactions accurately while maintaining customer satisfaction</li>
-              <li>Adapt across cashiering, stocking, and floor support responsibilities</li>
-            </ul>
-          </article>
+          </div>
 
-          <article class="timeline-item">
-            <div class="timeline-head">
-              <div>
-                <h3>Whole Foods Market</h3>
-                <p class="card-role">Customer Service</p>
+          <div class="osu-activity-item reveal">
+            <div class="osu-activity-rank rank-a">A</div>
+            <div class="osu-activity-body">
+              <div class="osu-activity-header">
+                <h3>Whole Foods Market <span class="osu-activity-role">— Customer Service</span></h3>
+                <span class="osu-activity-date">June 2023 – March 2025 · Tustin, CA</span>
               </div>
-              <p class="timeline-meta">Tustin, CA · June 2023 – March 2025</p>
+              <ul class="osu-activity-bullets">
+                <li>Delivered excellent customer service and resolved issues efficiently</li>
+                <li>Worked closely with team members to maintain smooth daily operations</li>
+                <li>Recognized as Employee of the Month at the state-wide level</li>
+              </ul>
             </div>
-            <ul>
-              <li>Delivered excellent customer service and resolved issues efficiently</li>
-              <li>Worked closely with team members to maintain smooth daily operations</li>
-              <li>Recognized as Employee of the Month at the state-wide level</li>
-            </ul>
-          </article>
+          </div>
+
         </div>
       </div>
     </section>
 
+    <!-- SKILLS — osu! profile stat bars -->
     <section id="skills" class="section">
       <div class="container">
         <div class="section-heading">
-          <p class="eyebrow">Technical Strengths</p>
+          <p class="eyebrow">Player Stats</p>
           <h2>Skills</h2>
         </div>
+        <div class="osu-skills-layout">
 
-        <div class="skills-grid">
-          <div class="skill-card">
-            <h3>Languages</h3>
-            <p>Python, C++, C, Java, C#, TypeScript, HTML, CSS, MIPS Assembly</p>
+          <div class="osu-skill-group reveal">
+            <h3 class="osu-skill-group-title">Languages</h3>
+            <div class="osu-skill-bars">
+              <div class="osu-skill-bar"><span class="osu-sb-label">Python</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="90"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">C++</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="75"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">C</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="72"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">Java</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="65"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">TypeScript</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="55"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">C#</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="55"></div></div></div>
+            </div>
           </div>
-          <div class="skill-card">
-            <h3>Tools &amp; Frameworks</h3>
-            <p>Git, GitHub, FastAPI, Streamlit, OpenCV, YOLOv8, OpenAI API, Linux/Unix, Unity, Blender, VS Code</p>
+
+          <div class="osu-skill-group reveal">
+            <h3 class="osu-skill-group-title">Tools &amp; Frameworks</h3>
+            <div class="osu-skill-bars">
+              <div class="osu-skill-bar"><span class="osu-sb-label">Git / GitHub</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="88"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">FastAPI</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="78"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">YOLOv8 / OpenCV</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="72"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">OpenAI API</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="68"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">Linux / Unix</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="70"></div></div></div>
+              <div class="osu-skill-bar"><span class="osu-sb-label">Streamlit</span><div class="osu-sb-track"><div class="osu-sb-fill" data-w="65"></div></div></div>
+            </div>
           </div>
-          <div class="skill-card">
-            <h3>Core Concepts</h3>
-            <p>Machine Learning, Computer Vision, Data Structures, Algorithms, OOP, Multithreading, Memory Management, REST APIs</p>
+
+          <div class="osu-skill-group osu-skill-concepts reveal">
+            <h3 class="osu-skill-group-title">Core Concepts</h3>
+            <div class="osu-concept-grid">
+              <span class="osu-concept">Machine Learning</span>
+              <span class="osu-concept">Computer Vision</span>
+              <span class="osu-concept">Data Structures</span>
+              <span class="osu-concept">Algorithms</span>
+              <span class="osu-concept">OOP</span>
+              <span class="osu-concept">Multithreading</span>
+              <span class="osu-concept">Memory Management</span>
+              <span class="osu-concept">REST APIs</span>
+              <span class="osu-concept">Concurrency</span>
+              <span class="osu-concept">Debugging</span>
+            </div>
           </div>
+
         </div>
       </div>
     </section>
 
+    <!-- ABOUT — osu! user profile -->
     <section id="about" class="section alt-section">
-      <div class="container narrow">
-        <div class="section-heading">
-          <p class="eyebrow">Background</p>
-          <h2>About Me</h2>
+      <div class="container">
+        <div class="osu-profile-card reveal">
+          <div class="osu-profile-header">
+            <div class="osu-profile-avatar">RC</div>
+            <div class="osu-profile-identity">
+              <h2 class="osu-profile-name">Ryan Chisholm</h2>
+              <p class="osu-profile-title">Computer Science · Intelligent Systems</p>
+              <p class="osu-profile-school">University of California, Irvine</p>
+            </div>
+          </div>
+          <div class="osu-profile-stats-row">
+            <div class="osu-profile-stat">
+              <span class="osu-ps-label">Expected Grad</span>
+              <span class="osu-ps-value">June 2027</span>
+            </div>
+            <div class="osu-profile-stat">
+              <span class="osu-ps-label">Prior School</span>
+              <span class="osu-ps-value">Irvine Valley College</span>
+            </div>
+            <div class="osu-profile-stat">
+              <span class="osu-ps-label">Achievement</span>
+              <span class="osu-ps-value">Dean's List</span>
+            </div>
+            <div class="osu-profile-stat">
+              <span class="osu-ps-label">Focus</span>
+              <span class="osu-ps-value">AI / Intelligent Systems</span>
+            </div>
+          </div>
+          <div class="osu-profile-divider"></div>
+          <p class="osu-profile-bio">
+            What I enjoy most about programming is solving problems step by step, improving code until it feels cleaner, and building things that go from a rough idea to something people can actually use. I'm drawn to AI, ML, and backend systems — and I'm still early in that journey with a lot left to build.
+          </p>
         </div>
-        <p class="about-text">
-          I am currently pursuing a B.S. in Computer Science at the University of California, Irvine,
-          specializing in Intelligent Systems and expected to graduate in June 2027. Before UCI, I earned
-          an Associate in Science from Irvine Valley College, where I was also on the Dean's List.
-        </p>
-        <p class="about-text">
-          What I enjoy most about programming is solving problems step by step, improving code until it feels
-          cleaner, and building projects that go from a rough idea to something people can actually use.
-          I am especially interested in software engineering, backend development, systems programming, and
-          game or interactive application development. I am specializing in Intelligent Systems at UCI as I have
-          had experience with AI development and learning and I am intriguied to continue that path further.
-        </p>
       </div>
     </section>
 
+    <!-- CONTACT — osu! DM panel -->
     <section id="contact" class="section">
       <div class="container narrow">
-        <div class="contact-card">
-          <p class="eyebrow">Get In Touch</p>
-          <h2>Contact</h2>
-          <p>
-            I'm always open to internship opportunities, project collaboration, and connecting with people in tech.
-          </p>
-          <div class="contact-links">
-            <a href="mailto:rychisholm3@gmail.com">rychisholm3@gmail.com</a>
-            <span>•</span>
-            <a href="https://github.com/rychisholm3" target="_blank" rel="noopener">github.com/rychisholm3</a>
+        <div class="osu-dm-card reveal">
+          <div class="osu-dm-header">
+            <div class="osu-dm-avatar">RC</div>
+            <div>
+              <p class="eyebrow">Send a Message</p>
+              <h2 class="osu-dm-title">Contact</h2>
+              <p class="osu-dm-sub">Open to internship opportunities, project collaboration, and connecting with people in tech.</p>
+            </div>
+          </div>
+          <div class="osu-dm-links">
+            <a href="mailto:rychisholm3@gmail.com" class="osu-dm-btn">✉&ensp;rychisholm3@gmail.com</a>
+            <a href="https://github.com/rychisholm3" target="_blank" rel="noopener" class="osu-dm-btn">⌘&ensp;github.com/rychisholm3</a>
+            <a href="resume.pdf" target="_blank" rel="noopener" class="osu-dm-btn osu-dm-primary">↓&ensp;Download Resume</a>
           </div>
         </div>
       </div>
     </section>
+
   </main>
 
   <footer class="footer">
@@ -480,18 +523,21 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* ── scroll reveal ── */
+    /* ── scroll reveal + skill bar animation ── */
     (function () {
-      var targets = document.querySelectorAll('.card, .timeline-item, .skill-card, .contact-card, .about-text, .section-heading');
-      targets.forEach(function (el) { el.classList.add('reveal'); });
+      var targets = document.querySelectorAll('.reveal');
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
+            /* animate skill bars when their group becomes visible */
+            entry.target.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
+              bar.style.width = bar.dataset.w + '%';
+            });
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.12 });
+      }, { threshold: 0.1 });
       targets.forEach(function (el) { observer.observe(el); });
     })();
 
@@ -532,6 +578,7 @@
           audioEl.crossOrigin = 'anonymous';
           /* SomaFM Groove Salad — ambient/chill, CORS-enabled, free */
           audioEl.src = 'https://ice6.somafm.com/groovesalad-256-mp3';
+          audioEl.volume = 0.25;
           audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
           analyser  = audioCtx.createAnalyser();
           analyser.fftSize = 512;
