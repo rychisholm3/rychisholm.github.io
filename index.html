@@ -63,6 +63,19 @@
       from { opacity:0; transform:translateY(5px); }
       to   { opacity:1; transform:translateY(0);   }
     }
+    /* ── intro hit circles ── */
+    .osu-intro-hc { position:absolute; width:34px; height:34px; transform:translate(-50%,-50%); pointer-events:none; }
+    .osu-hc-body  { position:absolute; inset:0; border-radius:50%; border:2px solid rgba(255,210,80,0.88); background:rgba(255,185,40,0.08); box-shadow:0 0 8px rgba(255,195,40,0.45); display:flex; align-items:center; justify-content:center; font-family:Inter,system-ui,sans-serif; font-size:0.7rem; font-weight:700; color:rgba(255,215,100,0.9); opacity:0; animation:osu-hcb-appear 0.22s ease forwards; }
+    .osu-hc-approach { position:absolute; border-radius:50%; border:1.5px solid rgba(255,195,60,0.55); animation:osu-hca-shrink linear forwards; }
+    @keyframes osu-hcb-appear { from{opacity:0;transform:scale(0.8);} to{opacity:1;transform:scale(1);} }
+    @keyframes osu-hca-shrink { from{inset:-20px;opacity:0.65;} to{inset:-3px;opacity:0.22;} }
+    .osu-intro-hc.hit .osu-hc-body { animation:osu-hcb-hit 0.42s ease forwards !important; }
+    .osu-intro-hc.hit .osu-hc-approach { animation:none !important; opacity:0; }
+    @keyframes osu-hcb-hit {
+      0%   { opacity:1; transform:scale(1);   background:rgba(255,255,160,0.75); box-shadow:0 0 0 0 rgba(255,230,80,0.9),0 0 22px rgba(255,235,80,1),0 0 55px rgba(255,200,0,0.7); border-color:rgba(255,255,200,1); }
+      30%  { box-shadow:0 0 0 18px rgba(255,230,80,0),0 0 40px rgba(255,215,60,0.5); transform:scale(1.5); }
+      100% { opacity:0; transform:scale(2.2); box-shadow:0 0 0 30px rgba(255,230,80,0); }
+    }
     /* ── RC slam: pops in from center ── */
     .osu-pre-slam {
       transform: scale(0) !important;
@@ -710,24 +723,34 @@
       resize();
       window.addEventListener('resize', resize);
 
-      var circles = [];
-      for (var i = 0; i < 14; i++) {
-        circles.push({
+      function makeCircle() {
+        return {
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           r: 14 + Math.random() * 28,
           vx: (Math.random() - 0.5) * 0.22,
           vy: (Math.random() - 0.5) * 0.22,
           phase: Math.random() * Math.PI * 2,
-          speed: 0.004 + Math.random() * 0.006,
+          speed: 0.0028 + Math.random() * 0.0042,
           alpha: 0.07 + Math.random() * 0.10,
-          pink: Math.random() > 0.38
-        });
+          pink: Math.random() > 0.38,
+          dead: false
+        };
       }
 
-      function draw() {
+      var circles = [];
+      for (var i = 0; i < 9; i++) circles.push(makeCircle());
+
+      var bursts = [];
+      var BURST_DUR = 350;
+
+      function draw(now) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        var toSpawn = 0;
         circles.forEach(function (c) {
+          if (c.dead) return;
+
           c.x += c.vx;
           c.y += c.vy;
           if (c.x < -c.r * 3) c.x = canvas.width + c.r;
@@ -737,33 +760,61 @@
 
           c.phase += c.speed;
           var t = (c.phase % (Math.PI * 2)) / (Math.PI * 2);
-          var approachR = c.r * (1.9 - t * 0.9);
-          var approachA = (1 - t) * c.alpha;
           var col = c.pink ? '255,78,154' : '130,90,210';
 
-          /* approach ring */
+          /* approach ring has closed in — hit, remove, spawn replacement */
+          if (t > 0.93) {
+            c.dead = true;
+            bursts.push({ x: c.x, y: c.y, r: c.r, col: col, born: now });
+            toSpawn++;
+            return;
+          }
+
+          var approachR = c.r * (1.9 - t * 0.9);
+          var approachA = (1 - t) * c.alpha;
+
           ctx.beginPath();
           ctx.arc(c.x, c.y, approachR, 0, Math.PI * 2);
           ctx.strokeStyle = 'rgba(' + col + ',' + approachA.toFixed(3) + ')';
           ctx.lineWidth = 1.5;
           ctx.stroke();
 
-          /* hit circle border */
           ctx.beginPath();
           ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
           ctx.strokeStyle = 'rgba(' + col + ',' + c.alpha.toFixed(3) + ')';
           ctx.lineWidth = 2;
           ctx.stroke();
 
-          /* soft inner fill */
           ctx.beginPath();
           ctx.arc(c.x, c.y, c.r * 0.82, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(' + col + ',' + (c.alpha * 0.18).toFixed(3) + ')';
           ctx.fill();
         });
+
+        /* cull dead, spawn fresh replacements */
+        circles = circles.filter(function (c) { return !c.dead; });
+        for (var i = 0; i < toSpawn; i++) circles.push(makeCircle());
+
+        /* draw hit-light bursts — soft glow only */
+        bursts = bursts.filter(function (b) {
+          var p = (now - b.born) / BURST_DUR;
+          if (p >= 1) return false;
+          var ease = 1 - p * p;
+          var glowR = b.r * 1.5;
+          var grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, glowR);
+          grad.addColorStop(0,   'rgba(' + b.col + ',' + (ease * 0.18).toFixed(3) + ')');
+          grad.addColorStop(0.5, 'rgba(' + b.col + ',' + (ease * 0.07).toFixed(3) + ')');
+          grad.addColorStop(1,   'rgba(' + b.col + ',0)');
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, glowR, 0, Math.PI * 2);
+          ctx.fillStyle = grad;
+          ctx.fill();
+          return true;
+        });
+
         requestAnimationFrame(draw);
       }
-      draw();
+      requestAnimationFrame(draw);
     })();
 
     document.getElementById("year").textContent = new Date().getFullYear();
@@ -877,7 +928,7 @@
         audioEl.play().then(function () {
           if (musicInd) musicInd.classList.add('playing');
         }).catch(function () { /* blocked — first click will start it */ });
-      }, 1850);
+      }, 2350);
 
       /* first click anywhere: wire up AudioContext + ensure audio plays */
       document.addEventListener('click', function onFirstGesture() {
@@ -922,7 +973,7 @@
         cookie.classList.remove('osu-pre-slam');
         beatLoop();
       } else {
-        setTimeout(beatLoop, 1750);
+        setTimeout(beatLoop, 2250);
       }
 
       /* cookie click: back if in section, else open/close menu */
@@ -963,7 +1014,58 @@
 
       /* 1. Welcome! grows in (animation already running via CSS) */
 
-      /* 2. RC pops in at 1.0s — simultaneous with Welcome! starting to fade */
+      /* ── hit circles: spawn 8 circles timed to the expanding ring ── */
+      /* Ring radius math: fast phase 88px→210px over 616ms, then slow phase to 273px */
+      var hcDefs = [
+        { dist: 110, angle:  30, num: 1 },
+        { dist: 145, angle: 105, num: 2 },
+        { dist: 130, angle: 200, num: 3 },
+        { dist: 160, angle: 310, num: 4 },
+        { dist: 180, angle:  70, num: 5 },
+        { dist: 195, angle: 165, num: 6 },
+        { dist: 205, angle: 255, num: 7 },
+        { dist: 210, angle: 345, num: 8 }
+      ];
+      /* linear interpolation: ring radius → elapsed ms */
+      function ringTime(r) {
+        if (r <= 210) return (r - 88) / (210 - 88) * 616;
+        return 616 + (r - 210) / (273 - 210) * 1736;
+      }
+      var cx = 210, cy = 210; /* center of the 420x420 wrap */
+      hcDefs.forEach(function (def) {
+        var hitMs  = ringTime(def.dist) + 100; /* +100ms offset for ring start delay */
+        var spawnMs = hitMs - 220;             /* body fades in 220ms before hit */
+        var approachDur = 220 + spawnMs;       /* approach ring shrinks from spawn to hit */
+        var rad = def.angle * Math.PI / 180;
+        var x   = cx + def.dist * Math.cos(rad);
+        var y   = cy + def.dist * Math.sin(rad);
+
+        setTimeout(function () {
+          var hc = document.createElement('div');
+          hc.className = 'osu-intro-hc';
+          hc.style.left = x + 'px';
+          hc.style.top  = y + 'px';
+
+          var body = document.createElement('div');
+          body.className = 'osu-hc-body';
+          body.textContent = def.num;
+
+          var approach = document.createElement('div');
+          approach.className = 'osu-hc-approach';
+          approach.style.animationDuration = (hitMs - spawnMs + 20) + 'ms';
+
+          hc.appendChild(approach);
+          hc.appendChild(body);
+          welcome.appendChild(hc);
+
+          /* trigger hit burst when ring arrives */
+          setTimeout(function () { hc.classList.add('hit'); }, hitMs - spawnMs);
+          /* remove element after burst */
+          setTimeout(function () { if (hc.parentNode) hc.parentNode.removeChild(hc); }, hitMs - spawnMs + 500);
+        }, Math.max(0, spawnMs));
+      });
+
+      /* 2. RC pops in at 1.5s — simultaneous with Welcome! starting to fade */
       setTimeout(function () {
         if (mainCookie) {
           mainCookie.classList.remove('osu-pre-slam');
@@ -971,16 +1073,16 @@
         }
         /* fade Welcome! out as RC expands over it */
         welcome.style.animation = 'osu-cookie-out 0.35s ease forwards';
-      }, 1000);
+      }, 1500);
 
-      /* 3. Fade the dark overlay out once slam settles (~1.6s) */
+      /* 3. Fade the dark overlay out once slam settles (~2.1s) */
       setTimeout(function () {
         intro.style.animation = 'osu-bg-out 0.55s ease forwards';
         setTimeout(function () {
           intro.remove();
           if (mainCookie) mainCookie.classList.remove('osu-slam-active');
         }, 560);
-      }, 1580);
+      }, 2080);
     })();
   </script>
 </body>
