@@ -583,40 +583,185 @@
       </div>
     </section>
 
-    <!-- ABOUT — osu! user profile -->
+    <!-- ABOUT — osu! Lazer profile viewer -->
     <section id="about" class="section alt-section">
       <div class="container">
-        <div class="osu-profile-card reveal">
-          <div class="osu-profile-header">
-            <div class="osu-profile-avatar">RC</div>
-            <div class="osu-profile-identity">
-              <h2 class="osu-profile-name">Ryan Chisholm</h2>
-              <p class="osu-profile-title">Computer Science · Intelligent Systems</p>
-              <p class="osu-profile-school">University of California, Irvine</p>
+        <div class="osu-lazer-frame reveal">
+
+          <!-- Window chrome -->
+          <div class="olf-titlebar">
+            <div class="olf-wc">
+              <span class="olf-wc-btn olf-close"></span>
+              <span class="olf-wc-btn olf-min"></span>
+              <span class="olf-wc-btn olf-max"></span>
+            </div>
+            <span class="olf-title-text">osu!(lazer) · User Profile</span>
+            <div class="olf-wc-spacer"></div>
+          </div>
+
+          <!-- Cover banner -->
+          <div class="olf-cover"><div class="olf-cover-bg"></div></div>
+
+          <!-- Profile header -->
+          <div class="olf-header">
+            <div class="olf-avatar-wrap">
+              <div class="olf-avatar-img"><span>RC</span></div>
+              <span class="olf-online-dot"></span>
+            </div>
+
+            <div class="olf-userinfo">
+              <div class="olf-badges-row">
+                <span class="olf-badge olf-badge-dean">🎓 Dean's List</span>
+                <span class="olf-badge olf-badge-ai">⚙️ AI · ML</span>
+              </div>
+              <h2 class="olf-username">rychisholm3</h2>
+              <p class="olf-realname">Ryan Chisholm</p>
+              <div class="olf-meta-row">
+                <span>🇺🇸</span>
+                <span class="olf-school">University of California, Irvine</span>
+              </div>
+              <p class="olf-joined">Joined Sep 2022 · CS · Intelligent Systems · Expected Grad June 2027</p>
+            </div>
+
+            <div class="olf-stats-panel">
+              <div class="olf-stat">
+                <span class="olf-stat-v">8,247<small>pp</small></span>
+                <span class="olf-stat-l">Performance</span>
+              </div>
+              <div class="olf-stat">
+                <span class="olf-stat-v">#3,412</span>
+                <span class="olf-stat-l">Global Rank</span>
+              </div>
+              <div class="olf-stat">
+                <span class="olf-stat-v">96.8%</span>
+                <span class="olf-stat-l">Accuracy</span>
+              </div>
+              <div class="olf-stat">
+                <span class="olf-stat-v">1,200<small>h</small></span>
+                <span class="olf-stat-l">Dev Time</span>
+              </div>
             </div>
           </div>
-          <div class="osu-profile-stats-row">
-            <div class="osu-profile-stat">
-              <span class="osu-ps-label">Expected Grad</span>
-              <span class="osu-ps-value">June 2027</span>
-            </div>
-            <div class="osu-profile-stat">
-              <span class="osu-ps-label">Prior School</span>
-              <span class="osu-ps-value">Irvine Valley College</span>
-            </div>
-            <div class="osu-profile-stat">
-              <span class="osu-ps-label">Achievement</span>
-              <span class="osu-ps-value">Dean's List</span>
-            </div>
-            <div class="osu-profile-stat">
-              <span class="osu-ps-label">Focus</span>
-              <span class="osu-ps-value">AI / Intelligent Systems</span>
+
+          <!-- Level bar -->
+          <div class="olf-level-row">
+            <span class="olf-lv">lv.3</span>
+            <div class="olf-lv-track"><div class="olf-lv-fill" style="width:72%"></div></div>
+            <span class="olf-lv-pct">72%</span>
+          </div>
+
+          <!-- Tabs -->
+          <div class="olf-tabs">
+            <button class="olf-tab active" data-tab="olf-overview">Overview</button>
+            <button class="olf-tab" data-tab="olf-me">Me!</button>
+            <button class="olf-tab" data-tab="olf-activity">Recent Activity</button>
+            <button class="olf-tab" data-tab="olf-medals">Medals</button>
+          </div>
+
+          <!-- Overview -->
+          <div class="olf-tab-pane active" id="olf-overview">
+            <div class="olf-overview-grid">
+              <div class="olf-rank-chart">
+                <p class="olf-chart-label">Rank Progress</p>
+                <svg class="olf-chart-svg" viewBox="0 0 400 80" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="rankGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(255,78,154,0.45)"/>
+                      <stop offset="100%" stop-color="rgba(255,78,154,0)"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="olf-chart-area" d="M0,72 C40,68 80,65 120,55 C160,45 180,50 220,38 C260,26 300,18 340,12 L400,7 L400,80 L0,80 Z"/>
+                  <path class="olf-chart-line" d="M0,72 C40,68 80,65 120,55 C160,45 180,50 220,38 C260,26 300,18 340,12 L400,7"/>
+                </svg>
+              </div>
+              <div class="olf-detail-stats">
+                <div class="olf-ds-row"><span class="olf-ds-l">Ranked Score</span><span class="olf-ds-v">31,204,988</span></div>
+                <div class="olf-ds-row"><span class="olf-ds-l">Max Combo</span><span class="olf-ds-v">x1,247</span></div>
+                <div class="olf-ds-row"><span class="olf-ds-l">Play Count</span><span class="olf-ds-v">2,847</span></div>
+                <div class="olf-ds-row"><span class="olf-ds-l">Total Score</span><span class="olf-ds-v">4.2B</span></div>
+                <div class="olf-ds-row"><span class="olf-ds-l">Total Hits</span><span class="olf-ds-v">192,847</span></div>
+              </div>
             </div>
           </div>
-          <div class="osu-profile-divider"></div>
-          <p class="osu-profile-bio">
-            What I enjoy most about programming is solving problems step by step, improving code until it feels cleaner, and building things that go from a rough idea to something people can actually use. I'm drawn to AI, ML, and backend systems — and I'm still early in that journey with a lot left to build.
-          </p>
+
+          <!-- Me! -->
+          <div class="olf-tab-pane" id="olf-me">
+            <div class="olf-bio">
+              <p>What I enjoy most about programming is solving problems step by step, improving code until it feels cleaner, and building things that go from a rough idea to something people can actually use. I'm drawn to AI, ML, and backend systems — and I'm still early in that journey with a lot left to build.</p>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="olf-tab-pane" id="olf-activity">
+            <div class="olf-activity-list">
+              <div class="olf-act-item">
+                <div class="olf-act-rank olf-act-rank-s">S</div>
+                <div class="olf-act-body">
+                  <p class="olf-act-text"><strong>rychisholm3</strong> achieved S rank on <strong>SafeSight AI</strong> [AI / Computer Vision]</p>
+                  <p class="olf-act-time">May 2025</p>
+                </div>
+              </div>
+              <div class="olf-act-item">
+                <div class="olf-act-rank olf-act-rank-s">S</div>
+                <div class="olf-act-body">
+                  <p class="olf-act-text"><strong>rychisholm3</strong> earned the <strong>Dean's List</strong> badge</p>
+                  <p class="olf-act-time">Jan 2025</p>
+                </div>
+              </div>
+              <div class="olf-act-item">
+                <div class="olf-act-rank olf-act-rank-a">A</div>
+                <div class="olf-act-body">
+                  <p class="olf-act-text"><strong>rychisholm3</strong> achieved A rank on <strong>AI Resume Screener</strong> [NLP / FastAPI]</p>
+                  <p class="olf-act-time">Apr 2025</p>
+                </div>
+              </div>
+              <div class="olf-act-item">
+                <div class="olf-act-rank olf-act-rank-b">B</div>
+                <div class="olf-act-body">
+                  <p class="olf-act-text"><strong>rychisholm3</strong> joined <strong>University of California, Irvine</strong></p>
+                  <p class="olf-act-time">Sep 2024</p>
+                </div>
+              </div>
+              <div class="olf-act-item">
+                <div class="olf-act-rank olf-act-rank-a">A</div>
+                <div class="olf-act-body">
+                  <p class="olf-act-text"><strong>rychisholm3</strong> achieved A rank on <strong>BORG Interpreter</strong> [C++ / Systems]</p>
+                  <p class="olf-act-time">Nov 2024</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medals -->
+          <div class="olf-tab-pane" id="olf-medals">
+            <div class="olf-medals-grid">
+              <div class="olf-medal">
+                <span class="olf-medal-icon">🎓</span>
+                <div><p class="olf-medal-name">Dean's List</p><p class="olf-medal-desc">Academic excellence</p></div>
+              </div>
+              <div class="olf-medal">
+                <span class="olf-medal-icon">🔀</span>
+                <div><p class="olf-medal-name">Transfer Scholar</p><p class="olf-medal-desc">Irvine Valley → UC Irvine</p></div>
+              </div>
+              <div class="olf-medal">
+                <span class="olf-medal-icon">👁️</span>
+                <div><p class="olf-medal-name">Machine Vision</p><p class="olf-medal-desc">SafeSight AI · YOLOv8</p></div>
+              </div>
+              <div class="olf-medal">
+                <span class="olf-medal-icon">🧠</span>
+                <div><p class="olf-medal-name">Language Model</p><p class="olf-medal-desc">AI Resume Screener · NLP</p></div>
+              </div>
+              <div class="olf-medal">
+                <span class="olf-medal-icon">⚙️</span>
+                <div><p class="olf-medal-name">Systems Builder</p><p class="olf-medal-desc">C++ / C · OS concepts</p></div>
+              </div>
+              <div class="olf-medal">
+                <span class="olf-medal-icon">🔗</span>
+                <div><p class="olf-medal-name">Full Stack</p><p class="olf-medal-desc">FastAPI + React + Python</p></div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -821,6 +966,20 @@
     })();
 
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    /* ── osu! lazer profile tabs ── */
+    (function () {
+      document.querySelectorAll('.olf-tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = this.dataset.tab;
+          document.querySelectorAll('.olf-tab').forEach(function (t) { t.classList.remove('active'); });
+          document.querySelectorAll('.olf-tab-pane').forEach(function (p) { p.classList.remove('active'); });
+          this.classList.add('active');
+          var pane = document.getElementById(target);
+          if (pane) pane.classList.add('active');
+        });
+      });
+    })();
 
     /* ── scroll reveal inside active sections ── */
     (function () {

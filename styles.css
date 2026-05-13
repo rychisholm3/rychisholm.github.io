@@ -1074,3 +1074,247 @@ img {
     width: 90px;
   }
 }
+
+/* ══════════════════════════════════════════════════
+   osu! Lazer Profile Frame — About section
+   ══════════════════════════════════════════════════ */
+
+.osu-lazer-frame {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 78, 154, 0.18);
+  background: #1c1628;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.olf-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 1rem;
+  background: #130f1e;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.olf-wc { display: flex; gap: 0.45rem; }
+.olf-wc-btn { width: 13px; height: 13px; border-radius: 50%; display: block; }
+.olf-close { background: #ff5f57; }
+.olf-min   { background: #febc2e; }
+.olf-max   { background: #28c840; }
+.olf-title-text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.07em;
+}
+.olf-wc-spacer { width: 57px; }
+
+.olf-cover { height: 160px; position: relative; overflow: hidden; }
+.olf-cover-bg {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #130822 0%, #3b0d6e 28%, #7218a0 52%, #c4195f 76%, #ff4e9a 100%);
+  position: relative;
+}
+.olf-cover-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 55%, rgba(28,22,40,0.95) 100%);
+}
+
+.olf-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 0 1.75rem 1rem;
+  margin-top: -48px;
+  position: relative;
+  z-index: 2;
+}
+
+.olf-avatar-wrap { flex-shrink: 0; position: relative; }
+.olf-avatar-img {
+  width: 104px; height: 104px;
+  border-radius: 50%;
+  border: 4px solid #1c1628;
+  background: radial-gradient(circle at 38% 36%, #ff90c8, #e8005a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 800; color: #fff;
+  box-shadow: 0 0 0 2px rgba(255,78,154,0.45), 0 8px 28px rgba(0,0,0,0.55);
+  overflow: hidden;
+}
+.olf-avatar-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.olf-online-dot {
+  position: absolute; bottom: 5px; right: 4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #44dd88;
+  border: 2.5px solid #1c1628;
+  box-shadow: 0 0 7px rgba(68,221,136,0.65);
+}
+
+.olf-userinfo { flex: 1; padding-top: 50px; min-width: 0; }
+.olf-badges-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.45rem; }
+.olf-badge {
+  display: inline-flex; align-items: center; gap: 0.22rem;
+  padding: 0.18rem 0.55rem; border-radius: 5px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;
+}
+.olf-badge-dean {
+  background: rgba(255,204,34,0.12);
+  border: 1px solid rgba(255,204,34,0.35);
+  color: #ffcc22;
+}
+.olf-badge-ai {
+  background: rgba(110,80,220,0.15);
+  border: 1px solid rgba(140,100,255,0.3);
+  color: rgba(185,165,255,0.95);
+}
+.olf-username {
+  margin: 0;
+  font-size: 1.5rem; font-weight: 800; color: #fff; letter-spacing: -0.01em;
+}
+.olf-realname { margin: 0.08rem 0 0.45rem; color: rgba(255,255,255,0.38); font-size: 0.85rem; }
+.olf-meta-row { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.25rem; }
+.olf-school { color: rgba(255,255,255,0.58); font-size: 0.84rem; }
+.olf-joined { margin: 0; color: rgba(255,255,255,0.28); font-size: 0.74rem; }
+
+.olf-stats-panel {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.35rem;
+  padding-top: 50px;
+  min-width: 220px;
+}
+.olf-stat {
+  display: flex; flex-direction: column; align-items: flex-end;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+.olf-stat-v { font-size: 1.15rem; font-weight: 800; color: #fff; line-height: 1; }
+.olf-stat-v small { font-size: 0.7rem; color: rgba(255,78,154,0.9); font-weight: 700; margin-left: 1px; }
+.olf-stat-l { font-size: 0.65rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.09em; margin-top: 0.2rem; }
+
+.olf-level-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.1rem 1.75rem 0.9rem; }
+.olf-lv { font-size: 0.75rem; font-weight: 700; color: rgba(255,78,154,0.85); min-width: 28px; }
+.olf-lv-track { flex: 1; height: 5px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; }
+.olf-lv-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,78,154,0.85), rgba(140,80,255,0.75));
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(255,78,154,0.45);
+}
+.olf-lv-pct { font-size: 0.72rem; color: rgba(255,255,255,0.35); min-width: 34px; text-align: right; }
+
+.olf-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 0 1.75rem;
+  overflow-x: auto;
+}
+.olf-tab {
+  padding: 0.65rem 1.1rem;
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255,255,255,0.38);
+  font-size: 0.82rem; font-weight: 600; letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  font-family: Inter, system-ui, sans-serif;
+}
+.olf-tab:hover { color: rgba(255,255,255,0.65); }
+.olf-tab.active { color: #fff; border-bottom-color: var(--osu-pink); }
+
+.olf-tab-pane { display: none; padding: 1.5rem 1.75rem; }
+.olf-tab-pane.active { display: block; }
+
+.olf-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1rem;
+  align-items: start;
+}
+.olf-rank-chart {
+  background: rgba(255,255,255,0.022);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 10px;
+  padding: 1rem 1.2rem 0.75rem;
+}
+.olf-chart-label {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+}
+.olf-chart-svg { width: 100%; height: 80px; overflow: visible; display: block; }
+.olf-chart-area { fill: url(#rankGrad); }
+.olf-chart-line { fill: none; stroke: rgba(255,78,154,0.8); stroke-width: 2; vector-effect: non-scaling-stroke; }
+
+.olf-detail-stats {
+  background: rgba(255,255,255,0.022);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.olf-ds-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.038);
+}
+.olf-ds-row:last-child { border-bottom: none; }
+.olf-ds-l { font-size: 0.8rem; color: rgba(255,255,255,0.42); }
+.olf-ds-v { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.82); }
+
+.olf-bio { max-width: 72ch; }
+.olf-bio p { margin: 0; color: rgba(255,255,255,0.68); font-size: 0.98rem; line-height: 1.78; }
+
+.olf-activity-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.olf-act-item {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.022);
+  border: 1px solid rgba(255,255,255,0.048);
+  border-radius: 10px;
+}
+.olf-act-rank {
+  flex-shrink: 0;
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; font-weight: 800;
+}
+.olf-act-rank-s { background: rgba(255,204,34,0.12); color: #ffcc22; border: 1px solid rgba(255,204,34,0.28); }
+.olf-act-rank-a { background: rgba(68,204,68,0.1);   color: #44cc44; border: 1px solid rgba(68,204,68,0.22); }
+.olf-act-rank-b { background: rgba(78,140,255,0.1);  color: #78aaff; border: 1px solid rgba(78,140,255,0.22); }
+.olf-act-body { flex: 1; }
+.olf-act-text { font-size: 0.85rem; color: rgba(255,255,255,0.7); margin: 0 0 0.15rem; }
+.olf-act-text strong { color: rgba(255,100,175,0.9); font-weight: 700; }
+.olf-act-time { font-size: 0.72rem; color: rgba(255,255,255,0.28); margin: 0; }
+
+.olf-medals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.75rem;
+}
+.olf-medal {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.8rem 0.95rem;
+  background: rgba(255,255,255,0.022);
+  border: 1px solid rgba(255,255,255,0.048);
+  border-radius: 10px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.olf-medal:hover { background: rgba(255,78,154,0.07); border-color: rgba(255,78,154,0.22); }
+.olf-medal-icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
+.olf-medal-name { margin: 0 0 0.12rem; font-size: 0.82rem; font-weight: 700; color: rgba(255,255,255,0.82); }
+.olf-medal-desc { margin: 0; font-size: 0.72rem; color: rgba(255,255,255,0.32); }
+
+@media (max-width: 840px) {
+  .olf-header { flex-wrap: wrap; }
+  .olf-stats-panel { padding-top: 0; width: 100%; grid-template-columns: repeat(4, 1fr); min-width: unset; }
+  .olf-overview-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 580px) {
+  .olf-stats-panel { grid-template-columns: repeat(2, 1fr); }
+  .olf-header, .olf-level-row { padding-left: 1rem; padding-right: 1rem; }
+  .olf-tabs, .olf-tab-pane { padding-left: 1rem; padding-right: 1rem; }
+  .olf-cover { height: 120px; }
+}
