@@ -215,7 +215,12 @@
       position: absolute;
       top: 50%;
       left: 50%;
+      transition: left 0.65s cubic-bezier(0.22,1,0.36,1);
       pointer-events: none;
+    }
+    /* when menu opens, nav origin tracks cookie's leftward shift (90px) */
+    .osu-nav.open {
+      left: calc(50% - 90px);
     }
     .osu-nav-btn {
       position: absolute;
@@ -363,14 +368,15 @@
         <span class="osu-name-sub">Ryan Chisholm</span>
       </div>
       <span class="osu-back-label">←</span>
-      <nav class="osu-nav" id="osu-nav" aria-hidden="true">
-        <a href="#about"      class="osu-nav-btn">About Me</a>
-        <a href="#projects"   class="osu-nav-btn">Projects</a>
-        <a href="#experience" class="osu-nav-btn">Experience</a>
-        <a href="#skills"     class="osu-nav-btn">Skills</a>
-        <a href="#contact"    class="osu-nav-btn">Contact</a>
-      </nav>
     </div>
+
+    <nav class="osu-nav" id="osu-nav" aria-hidden="true">
+      <a href="#about"      class="osu-nav-btn">About Me</a>
+      <a href="#projects"   class="osu-nav-btn">Projects</a>
+      <a href="#experience" class="osu-nav-btn">Experience</a>
+      <a href="#skills"     class="osu-nav-btn">Skills</a>
+      <a href="#contact"    class="osu-nav-btn">Contact</a>
+    </nav>
 
     <p class="osu-hint" aria-hidden="true">click to navigate</p>
     <div id="osu-music-ind" class="osu-music-ind" title="music">♪</div>
@@ -1124,7 +1130,7 @@
         });
       });
       document.addEventListener('click', function(e){
-        if (isOpen && !cookie.contains(e.target)) closeMenu();
+        if (isOpen && !cookie.contains(e.target) && !nav.contains(e.target)) closeMenu();
       });
 
       /* ── audio ── */
