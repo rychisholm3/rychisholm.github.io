@@ -610,7 +610,7 @@
             </div>
             <div class="olf-userinfo">
               <div class="olf-username-row">
-                <h2 class="olf-username">rychisholm3</h2>
+                <h2 class="olf-username">Ryan Chisholm</h2>
                 <span class="olf-supporter">♥♥</span>
               </div>
               <div class="olf-meta-row">
@@ -647,13 +647,13 @@
               </svg>
             </div>
             <div class="olf-right-stats">
-              <div class="olf-rs-row"><span class="olf-rs-l">Ranked Score</span><span class="olf-rs-v">31,204,988</span></div>
-              <div class="olf-rs-row"><span class="olf-rs-l">Hit Accuracy</span><span class="olf-rs-v">96.8%</span></div>
-              <div class="olf-rs-row"><span class="olf-rs-l">Play Count</span><span class="olf-rs-v">2,847</span></div>
-              <div class="olf-rs-row"><span class="olf-rs-l">Total Score</span><span class="olf-rs-v">4,247,038,210</span></div>
-              <div class="olf-rs-row"><span class="olf-rs-l">Total Hits</span><span class="olf-rs-v">192,847</span></div>
-              <div class="olf-rs-row"><span class="olf-rs-l">Maximum Combo</span><span class="olf-rs-v">1,247</span></div>
-              <div class="olf-rs-row"><span class="olf-rs-l">Replays Watched</span><span class="olf-rs-v">142</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Ranked Score</span><span class="olf-rs-v">284,937,482</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Hit Accuracy</span><span class="olf-rs-v">97.4%</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Play Count</span><span class="olf-rs-v">12,483</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Total Score</span><span class="olf-rs-v">18,294,847,210</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Total Hits</span><span class="olf-rs-v">1,284,739</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Maximum Combo</span><span class="olf-rs-v">2,843</span></div>
+              <div class="olf-rs-row"><span class="olf-rs-l">Replays Watched</span><span class="olf-rs-v">1,284</span></div>
             </div>
           </div>
 
@@ -664,11 +664,11 @@
               <span class="olf-substat-l">Medals</span>
             </div>
             <div class="olf-substat-item">
-              <span class="olf-substat-v">8,247</span>
+              <span class="olf-substat-v">10,284</span>
               <span class="olf-substat-l">pp</span>
             </div>
             <div class="olf-substat-item">
-              <span class="olf-substat-v">45d 14h</span>
+              <span class="olf-substat-v">127d 8h</span>
               <span class="olf-substat-l">Total Dev Time</span>
             </div>
             <div class="olf-grades">
@@ -686,9 +686,9 @@
               <span class="olf-social-btn">🔔 <strong>0</strong></span>
             </div>
             <div class="olf-level-wrap">
-              <div class="olf-lv-track"><div class="olf-lv-fill" style="width:72%"></div></div>
-              <span class="olf-lv-pct">72%</span>
-              <span class="olf-lv-badge">lv.3</span>
+              <div class="olf-lv-track"><div class="olf-lv-fill" style="width:96%"></div></div>
+              <span class="olf-lv-pct">96%</span>
+              <span class="olf-lv-badge">lv.99</span>
             </div>
           </div>
 
@@ -1036,10 +1036,9 @@
         tab.addEventListener('click', function () {
           var target = this.dataset.tab;
           document.querySelectorAll('.olf-tab').forEach(function (t) { t.classList.remove('active'); });
-          document.querySelectorAll('.olf-tab-pane').forEach(function (p) { p.classList.remove('active'); });
           this.classList.add('active');
           var pane = document.getElementById(target);
-          if (pane) pane.classList.add('active');
+          if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       });
     })();
