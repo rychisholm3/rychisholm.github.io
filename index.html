@@ -159,22 +159,31 @@
                   height 0.65s cubic-bezier(0.22,1,0.36,1);
       user-select: none;
     }
+    /* menu open: slide cookie left so tabs are visually centred on screen */
+    .osu-main-cookie.open {
+      left: calc(50% - 280px);
+    }
+    /* back-mode: full-size, dock to left edge with ~100px visible */
     .osu-main-cookie.back-mode {
-      top: calc(100vh - 84px);
-      left: 1.5rem;
-      width: 68px;
-      height: 68px;
+      top: calc(50% - 190px);
+      left: -280px;
     }
     .osu-main-cookie.back-mode .osu-main-cookie-inner { display: none; }
     .osu-back-label {
       display: none;
       color: #fff;
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-size: 2.2rem;
+      font-weight: 800;
       pointer-events: none;
       line-height: 1;
     }
-    .osu-main-cookie.back-mode .osu-back-label { display: block; }
+    .osu-main-cookie.back-mode .osu-back-label {
+      display: block;
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
     .osu-main-cookie-inner {
       display: flex; flex-direction: column; align-items: center; pointer-events: none;
     }
@@ -320,6 +329,8 @@
     }
     @media (max-width: 640px) {
       .osu-main-cookie { top: calc(50% - 120px); left: calc(50% - 120px); width: 240px; height: 240px; }
+      .osu-main-cookie.open { left: calc(50% - 120px); } /* no shift on mobile */
+      .osu-main-cookie.back-mode { top: calc(50% - 120px); left: -160px; }
       .osu-initials { font-size: 2.9rem; }
       .osu-nav { top: calc(50% + 128px); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 0.45rem; }
       .osu-nav-btn { position: static; width: 260px; padding: 0.85rem 1.2rem; text-align: center; transform: translateY(-10px) scale(1); }
@@ -352,15 +363,14 @@
         <span class="osu-name-sub">Ryan Chisholm</span>
       </div>
       <span class="osu-back-label">←</span>
+      <nav class="osu-nav" id="osu-nav" aria-hidden="true">
+        <a href="#about"      class="osu-nav-btn">About Me</a>
+        <a href="#projects"   class="osu-nav-btn">Projects</a>
+        <a href="#experience" class="osu-nav-btn">Experience</a>
+        <a href="#skills"     class="osu-nav-btn">Skills</a>
+        <a href="#contact"    class="osu-nav-btn">Contact</a>
+      </nav>
     </div>
-
-    <nav class="osu-nav" id="osu-nav" aria-hidden="true">
-      <a href="#about"      class="osu-nav-btn">About Me</a>
-      <a href="#projects"   class="osu-nav-btn">Projects</a>
-      <a href="#experience" class="osu-nav-btn">Experience</a>
-      <a href="#skills"     class="osu-nav-btn">Skills</a>
-      <a href="#contact"    class="osu-nav-btn">Contact</a>
-    </nav>
 
     <p class="osu-hint" aria-hidden="true">click to navigate</p>
     <div id="osu-music-ind" class="osu-music-ind" title="music">♪</div>
@@ -1103,6 +1113,7 @@
         inBackMode = false;
         cookie.classList.remove('back-mode');
         cookie.setAttribute('aria-label', 'Open navigation menu');
+        openMenu(); /* slide back to centre with menu open */
       }
 
       nav.querySelectorAll('.osu-nav-btn').forEach(function(btn){
@@ -1113,7 +1124,7 @@
         });
       });
       document.addEventListener('click', function(e){
-        if (isOpen && !cookie.contains(e.target) && !nav.contains(e.target)) closeMenu();
+        if (isOpen && !cookie.contains(e.target)) closeMenu();
       });
 
       /* ── audio ── */
