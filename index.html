@@ -136,10 +136,10 @@
     }
     .osu-main-cookie {
       position: fixed;
-      top: calc(50% - 170px);
-      left: calc(50% - 170px);
+      top: calc(50% - 190px);
+      left: calc(50% - 190px);
       z-index: 100;
-      width: 340px; height: 340px;
+      width: 380px; height: 380px;
       border-radius: 50%;
       background:
         repeating-linear-gradient( 60deg, transparent, transparent 9px, rgba(255,255,255,0.032) 9px, rgba(255,255,255,0.032) 18px),
@@ -193,9 +193,9 @@
     }
     /* music indicator */
     .osu-music-ind {
-      position: absolute; top: 1.4rem; right: 1.8rem;
+      position: fixed; top: 1.4rem; right: 1.8rem;
       color: rgba(255,255,255,0.2);
-      font-size: 1rem; cursor: pointer; z-index: 3;
+      font-size: 1.1rem; cursor: pointer; z-index: 200;
       transition: color 0.4s ease;
       user-select: none;
     }
@@ -211,8 +211,8 @@
     .osu-nav-btn {
       position: absolute;
       left: 0; top: 0;
-      width: 220px;
-      padding: 1rem 1.4rem 1rem 1.2rem;
+      width: 245px;
+      padding: 1rem 1.5rem 1rem 1.4rem;
       text-align: right;
       background: rgba(8, 11, 16, 0.28);
       border: 1px solid rgba(255, 255, 255, 0.14);
@@ -233,11 +233,12 @@
     .osu-nav.open { pointer-events: auto; }
     .osu-nav.open .osu-nav-btn { opacity: 1; pointer-events: auto; }
     /* fan positions: 64px center-to-center spacing; x = circle boundary at each tab's center y */
-    .osu-nav.open .osu-nav-btn:nth-child(1) { transform: translate(136px, -154px); transition-delay: 0.00s; }
-    .osu-nav.open .osu-nav-btn:nth-child(2) { transform: translate(159px,  -90px); transition-delay: 0.05s; }
-    .osu-nav.open .osu-nav-btn:nth-child(3) { transform: translate(170px,  -26px); transition-delay: 0.10s; }
-    .osu-nav.open .osu-nav-btn:nth-child(4) { transform: translate(159px,   38px); transition-delay: 0.15s; }
-    .osu-nav.open .osu-nav-btn:nth-child(5) { transform: translate(136px,  102px); transition-delay: 0.20s; }
+    /* fan: x = circle_edge_at_y − 72px so each tab starts well inside the cookie */
+    .osu-nav.open .osu-nav-btn:nth-child(1) { transform: translate( 66px, -156px); transition-delay: 0.00s; }
+    .osu-nav.open .osu-nav-btn:nth-child(2) { transform: translate(107px,  -91px); transition-delay: 0.05s; }
+    .osu-nav.open .osu-nav-btn:nth-child(3) { transform: translate(118px,  -26px); transition-delay: 0.10s; }
+    .osu-nav.open .osu-nav-btn:nth-child(4) { transform: translate(107px,   39px); transition-delay: 0.15s; }
+    .osu-nav.open .osu-nav-btn:nth-child(5) { transform: translate( 66px,  104px); transition-delay: 0.20s; }
     .osu-nav-btn:hover {
       background: rgba(255, 78, 154, 0.1);
       border-color: rgba(255, 255, 255, 0.26);
@@ -318,7 +319,7 @@
       pointer-events: auto;
     }
     @media (max-width: 640px) {
-      .osu-main-cookie { top: calc(50% - 110px); left: calc(50% - 110px); width: 220px; height: 220px; }
+      .osu-main-cookie { top: calc(50% - 120px); left: calc(50% - 120px); width: 240px; height: 240px; }
       .osu-initials { font-size: 2.9rem; }
       .osu-nav { top: calc(50% + 128px); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 0.45rem; }
       .osu-nav-btn { position: static; width: 260px; padding: 0.85rem 1.2rem; text-align: center; transform: translateY(-10px) scale(1); }
@@ -590,13 +591,7 @@
 
           <!-- Window chrome -->
           <div class="olf-titlebar">
-            <div class="olf-wc">
-              <span class="olf-wc-btn olf-close"></span>
-              <span class="olf-wc-btn olf-min"></span>
-              <span class="olf-wc-btn olf-max"></span>
-            </div>
             <span class="olf-title-text">osu!(lazer) · player info</span>
-            <div class="olf-wc-spacer"></div>
           </div>
 
           <!-- Cover -->
