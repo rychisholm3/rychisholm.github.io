@@ -1108,7 +1108,7 @@ img {
 .olf-wc-spacer { width: 57px; }
 
 /* ── Cover ── */
-.olf-cover { height: 200px; position: relative; overflow: hidden; }
+.olf-cover { height: 260px; position: relative; overflow: hidden; }
 .olf-cover-bg {
   width: 100%; height: 100%;
   background: linear-gradient(135deg, #130822 0%, #3b0d6e 25%, #7218a0 50%, #c4195f 75%, #ff4e9a 100%);
@@ -1122,17 +1122,17 @@ img {
 .olf-profile-head {
   display: flex; align-items: flex-end; gap: 1.25rem;
   padding: 0 1.75rem 1rem;
-  margin-top: -52px;
+  margin-top: -65px;
   position: relative; z-index: 2;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .olf-avatar-wrap { flex-shrink: 0; position: relative; }
 .olf-avatar-img {
-  width: 110px; height: 110px; border-radius: 8px;
+  width: 130px; height: 130px; border-radius: 8px;
   border: 3px solid #1c1628;
   background: radial-gradient(circle at 38% 36%, #ff90c8, #e8005a);
   display: flex; align-items: center; justify-content: center;
-  font-size: 2.2rem; font-weight: 800; color: #fff;
+  font-size: 2.6rem; font-weight: 800; color: #fff;
   box-shadow: 0 0 0 2px rgba(255,78,154,0.4), 0 8px 28px rgba(0,0,0,0.6);
   overflow: hidden;
 }
@@ -1155,7 +1155,7 @@ img {
 /* ── Stats section: ranks | chart | right table ── */
 .olf-stats-section {
   display: grid;
-  grid-template-columns: 160px 1fr 260px;
+  grid-template-columns: 160px 1fr 300px;
   gap: 0;
   padding: 0;
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -1186,8 +1186,8 @@ img {
   border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 .olf-rs-row:last-child { border-bottom: none; }
-.olf-rs-l { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
-.olf-rs-v { font-size: 0.82rem; font-weight: 700; color: rgba(255,255,255,0.85); }
+.olf-rs-l { font-size: 0.78rem; color: rgba(255,255,255,0.4); flex: 1; min-width: 0; }
+.olf-rs-v { font-size: 0.82rem; font-weight: 700; color: rgba(255,255,255,0.85); text-align: right; flex-shrink: 0; padding-left: 0.75rem; }
 
 /* ── Sub-stats bar ── */
 .olf-substats {
@@ -1314,13 +1314,17 @@ img {
 .olf-medal-badge {
   display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
   width: 90px; cursor: default;
+  filter: drop-shadow(0 0 6px rgba(255,78,154,0.4));
 }
+.olf-medal-badge.locked { filter: none; }
+.olf-medal-badge:hover { filter: drop-shadow(0 0 12px rgba(255,78,154,0.75)); }
+.olf-medal-badge.locked:hover { filter: drop-shadow(0 0 4px rgba(255,255,255,0.1)); }
 .olf-medal-badge:hover .olf-medal-circle { transform: scale(1.08); }
 .olf-medal-circle {
-  width: 80px; height: 80px; border-radius: 50%;
+  width: 82px; height: 82px;
+  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
   display: flex; align-items: center; justify-content: center;
   font-size: 2rem; line-height: 1;
-  border: 2px solid rgba(255,255,255,0.2);
   transition: transform 0.2s ease;
   position: relative; overflow: hidden;
 }
@@ -1367,7 +1371,9 @@ img {
   .olf-chart-col { border-right: none; }
   .olf-profile-head, .olf-substats, .olf-social-row, .olf-info-bar,
   .olf-tabs, .olf-tab-pane { padding-left: 1rem; padding-right: 1rem; }
-  .olf-cover { height: 140px; }
+  .olf-cover { height: 150px; }
+  .olf-avatar-img { width: 90px; height: 90px; font-size: 1.8rem; }
+  .olf-profile-head { margin-top: -45px; }
   .olf-lv-track { width: 100px; }
   .olf-grades { gap: 0.3rem; }
   .olf-grade { width: 34px; }
