@@ -103,36 +103,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
       background: #080b10;
-    }
-    .osu-landing::before, .osu-landing::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .osu-landing::before {
-      width: 65vw; height: 55vw;
-      background: rgba(255,51,130,0.14);
-      top: 5%; left: -10%;
-      animation: osu-blob-a 11s ease-in-out infinite alternate;
-    }
-    .osu-landing::after {
-      width: 55vw; height: 55vw;
-      background: rgba(100,48,195,0.11);
-      bottom: 0; right: -8%;
-      animation: osu-blob-b 13s ease-in-out infinite alternate;
-    }
-    @keyframes osu-blob-a {
-      from { transform: translate(0,  0) scale(1);    }
-      to   { transform: translate(40px,-30px) scale(1.08); }
-    }
-    @keyframes osu-blob-b {
-      from { transform: translate(0, 0)   scale(1);    }
-      to   { transform: translate(-30px,20px) scale(1.06); }
     }
     .osu-main-cookie {
       position: fixed;
@@ -1027,11 +998,16 @@
 
       var mx = -300, my = -300, visible = false;
       var trail = [];
-      var LIFE = 420;
+      var LIFE = 280;
+      var lastTX = -9999, lastTY = -9999;
 
       document.addEventListener('mousemove', function (e) {
         mx = e.clientX; my = e.clientY; visible = true;
-        trail.push({ x: mx, y: my, t: performance.now() });
+        var dx = mx - lastTX, dy = my - lastTY;
+        if (dx*dx + dy*dy >= 36) { /* min 6px between trail points */
+          trail.push({ x: mx, y: my, t: performance.now() });
+          lastTX = mx; lastTY = my;
+        }
       });
       document.addEventListener('mouseleave', function () { visible = false; });
       document.addEventListener('mouseenter', function () { visible = true; });
@@ -1055,19 +1031,17 @@
         while (trail.length && trail[0].t < cutoff) trail.shift();
 
         ctx.clearRect(0, 0, tc.width, tc.height);
+        ctx.fillStyle = 'rgba(255,230,80,1)';
         for (var i = 0; i < trail.length; i++) {
           var p = trail[i];
           var prog = 1 - (now - p.t) / LIFE;
           if (prog <= 0) continue;
-          var r = 5.5 * prog;
-          var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-          g.addColorStop(0, 'rgba(255,240,90,'  + (prog * 0.85).toFixed(3) + ')');
-          g.addColorStop(1, 'rgba(255,170,0,0)');
+          ctx.globalAlpha = prog * 0.9;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-          ctx.fillStyle = g;
+          ctx.arc(p.x, p.y, 5 * prog, 0, Math.PI * 2);
           ctx.fill();
         }
+        ctx.globalAlpha = 1;
       }
       requestAnimationFrame(frame);
     })();
@@ -1083,6 +1057,9 @@
       window.addEventListener('resize', resize);
 
       function makeCircle() {
+        var pink  = Math.random() > 0.38;
+        var col   = pink ? '255,78,154' : '130,90,210';
+        var alpha = 0.07 + Math.random() * 0.10;
         return {
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -1091,8 +1068,10 @@
           vy: (Math.random() - 0.5) * 0.22,
           phase: Math.random() * Math.PI * 2,
           speed: 0.0028 + Math.random() * 0.0042,
-          alpha: 0.07 + Math.random() * 0.10,
-          pink: Math.random() > 0.38,
+          alpha: alpha,
+          col: col,
+          strokeStyle: 'rgba(' + col + ',' + alpha.toFixed(3) + ')',
+          fillStyle:   'rgba(' + col + ',' + (alpha * 0.18).toFixed(3) + ')',
           dead: false
         };
       }
@@ -1103,8 +1082,46 @@
       var bursts = [];
       var BURST_DUR = 350;
 
+      /* ambient glow blobs — drawn on canvas so gradients fade to transparent,
+         no clip-box artifacts possible. Gradients are cached and only rebuilt
+         when the blob drifts more than 6px. */
+      var blob1 = { grad: null, lx: -9999, ly: -9999 };
+      var blob2 = { grad: null, lx: -9999, ly: -9999 };
+
+      function drawBlobs(now) {
+        var t = now * 0.00007;
+        var w = canvas.width, h = canvas.height;
+
+        var x1 = w * 0.18 + Math.sin(t)         * 45;
+        var y1 = h * 0.32 + Math.cos(t * 0.85)  * 35;
+        var r1 = Math.max(w, h) * 0.52;
+        if (Math.abs(x1 - blob1.lx) > 6 || Math.abs(y1 - blob1.ly) > 6) {
+          blob1.grad = ctx.createRadialGradient(x1, y1, 0, x1, y1, r1);
+          blob1.grad.addColorStop(0,   'rgba(255,51,130,0.18)');
+          blob1.grad.addColorStop(0.5, 'rgba(255,51,130,0.07)');
+          blob1.grad.addColorStop(1,   'rgba(255,51,130,0)');
+          blob1.lx = x1; blob1.ly = y1;
+        }
+        ctx.fillStyle = blob1.grad;
+        ctx.fillRect(0, 0, w, h);
+
+        var x2 = w * 0.80 + Math.sin(t * 0.9 + 2) * 35;
+        var y2 = h * 0.72 + Math.cos(t * 0.78)     * 28;
+        var r2 = Math.max(w, h) * 0.46;
+        if (Math.abs(x2 - blob2.lx) > 6 || Math.abs(y2 - blob2.ly) > 6) {
+          blob2.grad = ctx.createRadialGradient(x2, y2, 0, x2, y2, r2);
+          blob2.grad.addColorStop(0,   'rgba(100,48,195,0.15)');
+          blob2.grad.addColorStop(0.5, 'rgba(100,48,195,0.06)');
+          blob2.grad.addColorStop(1,   'rgba(100,48,195,0)');
+          blob2.lx = x2; blob2.ly = y2;
+        }
+        ctx.fillStyle = blob2.grad;
+        ctx.fillRect(0, 0, w, h);
+      }
+
       function draw(now) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBlobs(now);
 
         var toSpawn = 0;
         circles.forEach(function (c) {
@@ -1124,7 +1141,12 @@
           /* approach ring has closed in — hit, remove, spawn replacement */
           if (t > 0.93) {
             c.dead = true;
-            bursts.push({ x: c.x, y: c.y, r: c.r, col: col, born: now });
+            var glowR = c.r * 1.5;
+            var bgrad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, glowR);
+            bgrad.addColorStop(0,   'rgba(' + col + ',0.18)');
+            bgrad.addColorStop(0.5, 'rgba(' + col + ',0.07)');
+            bgrad.addColorStop(1,   'rgba(' + col + ',0)');
+            bursts.push({ x: c.x, y: c.y, r: c.r, glowR: glowR, grad: bgrad, born: now });
             toSpawn++;
             return;
           }
@@ -1134,19 +1156,19 @@
 
           ctx.beginPath();
           ctx.arc(c.x, c.y, approachR, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(' + col + ',' + approachA.toFixed(3) + ')';
+          ctx.strokeStyle = 'rgba(' + c.col + ',' + approachA.toFixed(3) + ')';
           ctx.lineWidth = 1.5;
           ctx.stroke();
 
           ctx.beginPath();
           ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(' + col + ',' + c.alpha.toFixed(3) + ')';
+          ctx.strokeStyle = c.strokeStyle;
           ctx.lineWidth = 2;
           ctx.stroke();
 
           ctx.beginPath();
           ctx.arc(c.x, c.y, c.r * 0.82, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(' + col + ',' + (c.alpha * 0.18).toFixed(3) + ')';
+          ctx.fillStyle = c.fillStyle;
           ctx.fill();
         });
 
@@ -1154,22 +1176,18 @@
         circles = circles.filter(function (c) { return !c.dead; });
         for (var i = 0; i < toSpawn; i++) circles.push(makeCircle());
 
-        /* draw hit-light bursts — soft glow only */
+        /* draw hit-light bursts — soft glow only, gradient cached at birth */
         bursts = bursts.filter(function (b) {
           var p = (now - b.born) / BURST_DUR;
           if (p >= 1) return false;
-          var ease = 1 - p * p;
-          var glowR = b.r * 1.5;
-          var grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, glowR);
-          grad.addColorStop(0,   'rgba(' + b.col + ',' + (ease * 0.18).toFixed(3) + ')');
-          grad.addColorStop(0.5, 'rgba(' + b.col + ',' + (ease * 0.07).toFixed(3) + ')');
-          grad.addColorStop(1,   'rgba(' + b.col + ',0)');
+          ctx.globalAlpha = 1 - p * p;
           ctx.beginPath();
-          ctx.arc(b.x, b.y, glowR, 0, Math.PI * 2);
-          ctx.fillStyle = grad;
+          ctx.arc(b.x, b.y, b.glowR, 0, Math.PI * 2);
+          ctx.fillStyle = b.grad;
           ctx.fill();
           return true;
         });
+        ctx.globalAlpha = 1;
 
         requestAnimationFrame(draw);
       }
@@ -1315,6 +1333,7 @@
 
       /* ── beat animation loop (runs always) ── */
       var t = 0, curScale = 1, curGlow = 50;
+      var lastGlowInt = -1, lastScaleStr = '';
       function beatLoop() {
         requestAnimationFrame(beatLoop);
         t += 0.022;
@@ -1334,12 +1353,21 @@
         }
         curScale = curScale + (targetScale - curScale) * 0.14;
         curGlow  = curGlow  + (targetGlow  - curGlow)  * 0.14;
-        var g = curGlow.toFixed(1);
-        cookie.style.transform  = 'scale(' + curScale.toFixed(4) + ')';
-        cookie.style.boxShadow  =
-          '0 0 ' + g + 'px rgba(255,51,130,0.85), ' +
-          '0 0 ' + (curGlow*2.2).toFixed(1) + 'px rgba(255,51,130,0.45), ' +
-          '0 0 ' + (curGlow*4).toFixed(1)   + 'px rgba(255,51,130,0.18)';
+
+        var scaleStr = curScale.toFixed(4);
+        if (scaleStr !== lastScaleStr) {
+          cookie.style.transform = 'scale(' + scaleStr + ')';
+          lastScaleStr = scaleStr;
+        }
+
+        var glowInt = Math.round(curGlow);
+        if (glowInt !== lastGlowInt) {
+          lastGlowInt = glowInt;
+          cookie.style.boxShadow =
+            '0 0 ' + glowInt + 'px rgba(255,51,130,0.85), ' +
+            '0 0 ' + Math.round(glowInt*2.2) + 'px rgba(255,51,130,0.45), ' +
+            '0 0 ' + Math.round(glowInt*4)   + 'px rgba(255,51,130,0.18)';
+        }
       }
       /* start beat loop after slam completes (~2.1s); immediately if reduced motion */
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
