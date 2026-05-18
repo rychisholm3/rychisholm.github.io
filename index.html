@@ -130,19 +130,22 @@
                   height 0.65s cubic-bezier(0.22,1,0.36,1);
       user-select: none;
     }
-    /* full-screen ambient glow behind cookie — radial-gradient fades to
-       transparent so it can never be clipped into a box by the viewport */
+    /* cookie ambient glow — fixed size, animator uses transform:scale so
+       the browser composites it without any repaint (no box artifact) */
     #cookie-glow-bg {
       position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background: radial-gradient(
-        circle var(--cgr, 200px) at var(--cgx, 50%) var(--cgy, 50%),
-        rgba(255,51,130,0.22) 0%,
-        rgba(255,51,130,0.08) 50%,
-        transparent 100%
+      width: 800px; height: 800px;
+      top: 50%; left: 50%;
+      margin: -400px 0 0 -400px;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255,51,130,0.26) 0%,
+        rgba(255,51,130,0.10) 35%,
+        transparent 70%
       );
+      pointer-events: none;
+      z-index: 2;
+      will-change: transform;
     }
     /* menu open: slide cookie left so tabs are visually centred on screen */
     .osu-main-cookie.open {
@@ -1343,7 +1346,7 @@
       var t = 0, curScale = 1, curGlow = 50;
       var lastGlowInt = -1, lastScaleStr = '';
       var glowDiv = document.getElementById('cookie-glow-bg');
-      var lastCgx = -1, lastCgy = -1, lastCgr = -1;
+      var lastGlowTransform = '';
 
       function beatLoop() {
         requestAnimationFrame(beatLoop);
@@ -1379,20 +1382,16 @@
             '0 0 ' + Math.round(glowInt * 1.8) + 'px rgba(255,51,130,0.45)';
         }
 
-        /* drive the full-screen ambient glow div — radial-gradient never clips */
+        /* drive glow div with transform only — compositor-only, zero repaint */
         if (glowDiv) {
           var rect = cookie.getBoundingClientRect();
-          var cgx = Math.round(rect.left + rect.width  * 0.5);
-          var cgy = Math.round(rect.top  + rect.height * 0.5);
-          var cgr = Math.round(curGlow * 4);
-          if (cgx !== lastCgx || cgy !== lastCgy) {
-            glowDiv.style.setProperty('--cgx', cgx + 'px');
-            glowDiv.style.setProperty('--cgy', cgy + 'px');
-            lastCgx = cgx; lastCgy = cgy;
-          }
-          if (cgr !== lastCgr) {
-            glowDiv.style.setProperty('--cgr', cgr + 'px');
-            lastCgr = cgr;
+          var dx = Math.round(rect.left + rect.width  * 0.5 - window.innerWidth  * 0.5);
+          var dy = Math.round(rect.top  + rect.height * 0.5 - window.innerHeight * 0.5);
+          var gs = (curGlow / 50).toFixed(3);
+          var tf = 'translate(' + dx + 'px,' + dy + 'px) scale(' + gs + ')';
+          if (tf !== lastGlowTransform) {
+            glowDiv.style.transform = tf;
+            lastGlowTransform = tf;
           }
         }
       }
