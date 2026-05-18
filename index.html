@@ -103,7 +103,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #080b10;
+      background: transparent;
     }
     .osu-main-cookie {
       position: fixed;
@@ -1020,6 +1020,7 @@
         if (e.target.closest(clickable)) dot.classList.remove('osu-cursor-hover');
       });
 
+      var trailWasDrawn = false;
       function frame(now) {
         requestAnimationFrame(frame);
 
@@ -1028,9 +1029,13 @@
         dot.style.opacity = visible ? '1' : '0';
 
         var cutoff = now - LIFE;
-        while (trail.length && trail[0].t < cutoff) trail.shift();
+        var firstValid = 0;
+        while (firstValid < trail.length && trail[firstValid].t < cutoff) firstValid++;
+        if (firstValid > 0) trail.splice(0, firstValid);
 
+        if (trail.length === 0 && !trailWasDrawn) return;
         ctx.clearRect(0, 0, tc.width, tc.height);
+        trailWasDrawn = trail.length > 0;
         ctx.fillStyle = 'rgba(255,230,80,1)';
         for (var i = 0; i < trail.length; i++) {
           var p = trail[i];
@@ -1082,46 +1087,33 @@
       var bursts = [];
       var BURST_DUR = 350;
 
-      /* ambient glow blobs — drawn on canvas so gradients fade to transparent,
-         no clip-box artifacts possible. Gradients are cached and only rebuilt
-         when the blob drifts more than 6px. */
-      var blob1 = { grad: null, lx: -9999, ly: -9999 };
-      var blob2 = { grad: null, lx: -9999, ly: -9999 };
+      /* Blob glows driven by CSS custom properties on :root — zero canvas cost,
+         GPU-composited natively, and can never produce a clip-box artifact. */
+      var blobCss = { x1: -9999, y1: -9999, x2: -9999, y2: -9999 };
+      var docStyle = document.documentElement.style;
 
-      function drawBlobs(now) {
-        var t = now * 0.00007;
-        var w = canvas.width, h = canvas.height;
-
-        var x1 = w * 0.18 + Math.sin(t)         * 45;
-        var y1 = h * 0.32 + Math.cos(t * 0.85)  * 35;
-        var r1 = Math.max(w, h) * 0.52;
-        if (Math.abs(x1 - blob1.lx) > 6 || Math.abs(y1 - blob1.ly) > 6) {
-          blob1.grad = ctx.createRadialGradient(x1, y1, 0, x1, y1, r1);
-          blob1.grad.addColorStop(0,   'rgba(255,51,130,0.18)');
-          blob1.grad.addColorStop(0.5, 'rgba(255,51,130,0.07)');
-          blob1.grad.addColorStop(1,   'rgba(255,51,130,0)');
-          blob1.lx = x1; blob1.ly = y1;
+      function updateBlobCSS(now) {
+        var t  = now * 0.00007;
+        var vw = window.innerWidth, vh = window.innerHeight;
+        var x1 = Math.round(vw * 0.18 + Math.sin(t)          * 45);
+        var y1 = Math.round(vh * 0.32 + Math.cos(t * 0.85)   * 35);
+        var x2 = Math.round(vw * 0.80 + Math.sin(t * 0.9 + 2)* 35);
+        var y2 = Math.round(vh * 0.72 + Math.cos(t * 0.78)   * 28);
+        if (Math.abs(x1 - blobCss.x1) > 2 || Math.abs(y1 - blobCss.y1) > 2) {
+          docStyle.setProperty('--blob1-x', x1 + 'px');
+          docStyle.setProperty('--blob1-y', y1 + 'px');
+          blobCss.x1 = x1; blobCss.y1 = y1;
         }
-        ctx.fillStyle = blob1.grad;
-        ctx.fillRect(0, 0, w, h);
-
-        var x2 = w * 0.80 + Math.sin(t * 0.9 + 2) * 35;
-        var y2 = h * 0.72 + Math.cos(t * 0.78)     * 28;
-        var r2 = Math.max(w, h) * 0.46;
-        if (Math.abs(x2 - blob2.lx) > 6 || Math.abs(y2 - blob2.ly) > 6) {
-          blob2.grad = ctx.createRadialGradient(x2, y2, 0, x2, y2, r2);
-          blob2.grad.addColorStop(0,   'rgba(100,48,195,0.15)');
-          blob2.grad.addColorStop(0.5, 'rgba(100,48,195,0.06)');
-          blob2.grad.addColorStop(1,   'rgba(100,48,195,0)');
-          blob2.lx = x2; blob2.ly = y2;
+        if (Math.abs(x2 - blobCss.x2) > 2 || Math.abs(y2 - blobCss.y2) > 2) {
+          docStyle.setProperty('--blob2-x', x2 + 'px');
+          docStyle.setProperty('--blob2-y', y2 + 'px');
+          blobCss.x2 = x2; blobCss.y2 = y2;
         }
-        ctx.fillStyle = blob2.grad;
-        ctx.fillRect(0, 0, w, h);
       }
 
       function draw(now) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawBlobs(now);
+        updateBlobCSS(now);
 
         var toSpawn = 0;
         circles.forEach(function (c) {
