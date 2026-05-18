@@ -123,8 +123,7 @@
       justify-content: center;
       cursor: pointer;
       will-change: transform;
-      transition: box-shadow 0.08s ease,
-                  top 0.65s cubic-bezier(0.22,1,0.36,1),
+      transition: top 0.65s cubic-bezier(0.22,1,0.36,1),
                   left 0.65s cubic-bezier(0.22,1,0.36,1),
                   width 0.65s cubic-bezier(0.22,1,0.36,1),
                   height 0.65s cubic-bezier(0.22,1,0.36,1);
@@ -1373,21 +1372,14 @@
           lastScaleStr = scaleStr;
         }
 
-        var glowInt = Math.round(curGlow);
-        if (glowInt !== lastGlowInt) {
-          lastGlowInt = glowInt;
-          /* tight inner glow only — outer ambient handled by #cookie-glow-bg */
-          cookie.style.boxShadow =
-            '0 0 ' + glowInt + 'px rgba(255,51,130,0.9), ' +
-            '0 0 ' + Math.round(glowInt * 1.8) + 'px rgba(255,51,130,0.45)';
-        }
-
-        /* drive glow div with transform only — compositor-only, zero repaint */
+        /* drive glow div with transform only — compositor-only, zero repaint,
+           no box-shadow updates ever (those cause layer repaints = box flash) */
         if (glowDiv) {
           var rect = cookie.getBoundingClientRect();
           var dx = Math.round(rect.left + rect.width  * 0.5 - window.innerWidth  * 0.5);
           var dy = Math.round(rect.top  + rect.height * 0.5 - window.innerHeight * 0.5);
-          var gs = (curGlow / 50).toFixed(3);
+          /* map curGlow 38-110 → scale 0.92-1.36 so it never gets absurdly large */
+          var gs = (0.7 + curGlow * 0.006).toFixed(3);
           var tf = 'translate(' + dx + 'px,' + dy + 'px) scale(' + gs + ')';
           if (tf !== lastGlowTransform) {
             glowDiv.style.transform = tf;
