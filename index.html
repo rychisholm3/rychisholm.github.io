@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <meta name="description" content="Portfolio of Ryan Chisholm — computer science student at UC Irvine with experience in software, systems, and Unity development." />
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <style>
     #osu-intro {
       position: fixed;
@@ -37,13 +38,7 @@
         0 0 110px rgba(30, 90,255,0.16),
         inset 0 0 22px rgba(60,130,255,0.18);
       opacity: 0;
-      animation: osu-ring-in 2.8s 0.1s ease-out forwards;
-    }
-    @keyframes osu-ring-in {
-      0%   { opacity:0; transform:scale(0.42); }
-      22%  { opacity:1; transform:scale(1.0);  }
-      38%  { transform:scale(0.97); }
-      100% { transform:scale(1.3);  opacity:0.65; }
+      transform: scale(0.42);
     }
     #osu-welcome-text {
       position: relative;
@@ -57,11 +52,6 @@
       text-indent: 0.5em;
       user-select: none;
       opacity: 0;
-      animation: osu-text-in 0.7s 0.45s ease forwards;
-    }
-    @keyframes osu-text-in {
-      from { opacity:0; transform:translateY(5px); }
-      to   { opacity:1; transform:translateY(0);   }
     }
     /* ── intro hit circles ── */
     .osu-intro-hc { position:absolute; width:34px; height:34px; transform:translate(-50%,-50%); pointer-events:none; }
@@ -283,8 +273,9 @@
         0 0 28px rgba(255,180,0,0.4);
       pointer-events: none;
       z-index: 99999;
+      top: 0; left: 0;
       transform: translate(-50%, -50%);
-      will-change: left, top;
+      will-change: transform;
       transition: width 0.12s ease, height 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
     }
     #osu-cursor.osu-cursor-hover {
@@ -313,12 +304,14 @@
         radial-gradient(900px 600px at 15% 0%, rgba(200,70,140,0.08), transparent 60%),
         linear-gradient(180deg, #0c0a16 0%, #090a12 100%);
       opacity: 0;
+      transform: translateY(10px);
       pointer-events: none;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1);
       padding-bottom: 5rem;
     }
     main > section.active {
       opacity: 1;
+      transform: translateY(0);
       pointer-events: auto;
     }
     @media (max-width: 640px) {
@@ -1068,8 +1061,7 @@
       function frame(now) {
         requestAnimationFrame(frame);
 
-        dot.style.left = mx + 'px';
-        dot.style.top  = my + 'px';
+        dot.style.transform = 'translate(calc(-50% + ' + mx + 'px), calc(-50% + ' + my + 'px))';
         dot.style.opacity = visible ? '1' : '0';
 
         var cutoff = now - LIFE;
@@ -1095,54 +1087,90 @@
       requestAnimationFrame(frame);
     })();
 
-    /* ── osu! hit-circle background canvas ── */
+    /* ── osu! beatmap background canvas ── */
     (function () {
       var canvas = document.getElementById('osu-bg-canvas');
       if (!canvas) return;
       var ctx = canvas.getContext('2d');
+      var DIM = 0.15;
 
       function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
       resize();
       window.addEventListener('resize', resize);
 
-      function makeCircle() {
-        var pink  = Math.random() > 0.38;
-        var col   = pink ? '255,78,154' : '130,90,210';
-        var alpha = 0.07 + Math.random() * 0.10;
-        return {
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: 14 + Math.random() * 28,
-          vx: (Math.random() - 0.5) * 0.22,
-          vy: (Math.random() - 0.5) * 0.22,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.0028 + Math.random() * 0.0042,
-          alpha: alpha,
-          col: col,
-          strokeStyle: 'rgba(' + col + ',' + alpha.toFixed(3) + ')',
-          fillStyle:   'rgba(' + col + ',' + (alpha * 0.18).toFixed(3) + ')',
-          dead: false
-        };
+      function getScl() { return Math.min(canvas.width / 640, canvas.height / 480); }
+      function preemptMs(ar) { return ar <= 5 ? 1800 - 120 * ar : 1200 - 150 * (ar - 5); }
+      function csRadius(cs) { return 54.4 - 4.48 * cs; }
+      function rnd(a, b)    { return a + Math.random() * (b - a); }
+
+      var SONGS = [
+        { name: 'Freedom Dive',    bpm: 222, ar: 9.4, cs: 4.0, style: 'stream', loopMs: 18000,
+          pal: ['255,78,154', '200,60,255', '100,200,255', '255,160,50'] },
+        { name: 'Blue Zenith',     bpm: 200, ar: 9.3, cs: 4.2, style: 'jump',   loopMs: 16000,
+          pal: ['80,180,255', '50,130,255', '255,78,154', '180,100,255'] },
+        { name: 'Sidetracked Day', bpm: 175, ar: 9.2, cs: 4.0, style: 'aim',    loopMs: 14000,
+          pal: ['255,160,50', '255,78,154', '80,220,160', '160,80,255'] },
+      ];
+
+      function generateObjects(song) {
+        var beat = 60000 / song.bpm;
+        var objs = [], t = 500, combo = 1, cIdx = 0, px = 256, py = 192;
+        while (t < song.loopMs - 800) {
+          if (song.style === 'stream') {
+            var len = 6 + Math.floor(rnd(0, 10));
+            var sa = rnd(0, Math.PI * 2), sp = rnd(44, 60);
+            for (var i = 0; i < len && t < song.loopMs - 800; i++) {
+              sa += rnd(-0.4, 0.4);
+              px = Math.max(65, Math.min(447, px + Math.cos(sa) * sp));
+              py = Math.max(65, Math.min(319, py + Math.sin(sa) * sp));
+              objs.push({ x: px, y: py, time: t, combo: combo, cIdx: cIdx++ });
+              t += beat / 4;
+            }
+            combo++; cIdx = 0;
+            t += beat * rnd(0.5, 1.5);
+            px = rnd(80, 432); py = rnd(70, 314);
+          } else if (song.style === 'jump') {
+            var ga = rnd(0, Math.PI * 2), gc = 3 + Math.floor(rnd(0, 5));
+            for (var j = 0; j < gc && t < song.loopMs - 800; j++) {
+              ga += Math.PI * rnd(0.45, 0.85) * (Math.random() > 0.5 ? 1 : -1);
+              px = Math.max(65, Math.min(447, px + Math.cos(ga) * rnd(160, 240)));
+              py = Math.max(65, Math.min(319, py + Math.sin(ga) * rnd(90, 180)));
+              objs.push({ x: px, y: py, time: t, combo: combo, cIdx: cIdx++ });
+              t += beat * (Math.random() > 0.3 ? 1 : 0.5);
+            }
+            combo++; cIdx = 0;
+            t += beat * rnd(1, 2);
+          } else {
+            var groupSize = 3 + Math.floor(rnd(0, 4));
+            var ba = rnd(0, Math.PI * 2), bsp = rnd(80, 140);
+            for (var k = 0; k < groupSize && t < song.loopMs - 800; k++) {
+              if (k > 0) ba += Math.PI * rnd(0.3, 0.7);
+              px = Math.max(65, Math.min(447, px + Math.cos(ba) * bsp));
+              py = Math.max(65, Math.min(319, py + Math.sin(ba) * bsp));
+              objs.push({ x: px, y: py, time: t, combo: combo, cIdx: cIdx++ });
+              t += beat * 0.5;
+            }
+            combo++; cIdx = 0;
+            t += beat * rnd(0.75, 1.5);
+            px = rnd(80, 432); py = rnd(70, 314);
+          }
+        }
+        return objs;
       }
 
-      var circles = [];
-      for (var i = 0; i < 9; i++) circles.push(makeCircle());
+      var songData = SONGS.map(function(s) { return { song: s, objs: generateObjects(s) }; });
+      var songIdx = 0, songStartTime = null;
+      var bursts = [], BURST_DUR = 500;
 
-      var bursts = [];
-      var BURST_DUR = 350;
-
-      /* Blob glows driven by CSS custom properties on :root — zero canvas cost,
-         GPU-composited natively, and can never produce a clip-box artifact. */
       var blobCss = { x1: -9999, y1: -9999, x2: -9999, y2: -9999 };
       var docStyle = document.documentElement.style;
 
       function updateBlobCSS(now) {
-        var t  = now * 0.00007;
-        var vw = window.innerWidth, vh = window.innerHeight;
-        var x1 = Math.round(vw * 0.18 + Math.sin(t)          * 45);
-        var y1 = Math.round(vh * 0.32 + Math.cos(t * 0.85)   * 35);
-        var x2 = Math.round(vw * 0.80 + Math.sin(t * 0.9 + 2)* 35);
-        var y2 = Math.round(vh * 0.72 + Math.cos(t * 0.78)   * 28);
+        var bt = now * 0.00007, vw = window.innerWidth, vh = window.innerHeight;
+        var x1 = Math.round(vw * 0.18 + Math.sin(bt)            * 45);
+        var y1 = Math.round(vh * 0.32 + Math.cos(bt * 0.85)     * 35);
+        var x2 = Math.round(vw * 0.80 + Math.sin(bt * 0.9 + 2)  * 35);
+        var y2 = Math.round(vh * 0.72 + Math.cos(bt * 0.78)     * 28);
         if (Math.abs(x1 - blobCss.x1) > 2 || Math.abs(y1 - blobCss.y1) > 2) {
           docStyle.setProperty('--blob1-x', x1 + 'px');
           docStyle.setProperty('--blob1-y', y1 + 'px');
@@ -1158,75 +1186,139 @@
       function draw(now) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         updateBlobCSS(now);
+        if (songStartTime === null) songStartTime = now;
 
-        var toSpawn = 0;
-        circles.forEach(function (c) {
-          if (c.dead) return;
+        var scl  = getScl();
+        var offX = (canvas.width  - 640 * scl) / 2;
+        var offY = (canvas.height - 480 * scl) / 2;
+        var cur  = songData[songIdx];
+        var song = cur.song, objs = cur.objs;
+        var pre  = preemptMs(song.ar);
+        var R    = csRadius(song.cs) * scl;
+        var pal  = song.pal;
+        var elapsed = now - songStartTime;
 
-          c.x += c.vx;
-          c.y += c.vy;
-          if (c.x < -c.r * 3) c.x = canvas.width + c.r;
-          if (c.x > canvas.width + c.r * 3) c.x = -c.r;
-          if (c.y < -c.r * 3) c.y = canvas.height + c.r;
-          if (c.y > canvas.height + c.r * 3) c.y = -c.r;
+        if (elapsed >= song.loopMs) {
+          songIdx = (songIdx + 1) % SONGS.length;
+          songStartTime = now; elapsed = 0;
+          songData[songIdx].objs.forEach(function(o) { o._hit = false; });
+          cur = songData[songIdx]; song = cur.song; objs = cur.objs;
+          pre = preemptMs(song.ar); R = csRadius(song.cs) * scl; pal = song.pal;
+        }
 
-          c.phase += c.speed;
-          var t = (c.phase % (Math.PI * 2)) / (Math.PI * 2);
-          var col = c.pink ? '255,78,154' : '130,90,210';
-
-          /* approach ring has closed in — hit, remove, spawn replacement */
-          if (t > 0.93) {
-            c.dead = true;
-            var glowR = c.r * 1.5;
-            var bgrad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, glowR);
-            bgrad.addColorStop(0,   'rgba(' + col + ',0.18)');
-            bgrad.addColorStop(0.5, 'rgba(' + col + ',0.07)');
-            bgrad.addColorStop(1,   'rgba(' + col + ',0)');
-            bursts.push({ x: c.x, y: c.y, r: c.r, glowR: glowR, grad: bgrad, born: now });
-            toSpawn++;
-            return;
+        /* Collect visible objects; spawn bursts for freshly-hit notes */
+        var visible = [];
+        for (var oi = 0; oi < objs.length; oi++) {
+          var o = objs[oi];
+          var delta = o.time - elapsed;
+          if (delta > pre) continue;
+          if (delta < -150) {
+            if (!o._hit) {
+              o._hit = true;
+              bursts.push({ x: offX + o.x * scl, y: offY + o.y * scl, r: R,
+                            col: pal[(o.combo - 1) % pal.length], born: now });
+            }
+            continue;
           }
+          visible.push({ o: o, delta: delta });
+        }
 
-          var approachR = c.r * (1.9 - t * 0.9);
-          var approachA = (1 - t) * c.alpha;
+        /* Follow-point dots between consecutive visible circles */
+        ctx.globalAlpha = DIM * 0.55;
+        for (var vi = 0; vi < visible.length - 1; vi++) {
+          var fa = visible[vi].o, fb = visible[vi + 1].o;
+          var fax = offX + fa.x * scl, fay = offY + fa.y * scl;
+          var fbx = offX + fb.x * scl, fby = offY + fb.y * scl;
+          var fdx = fbx - fax, fdy = fby - fay;
+          var fdist = Math.sqrt(fdx * fdx + fdy * fdy);
+          if (fdist < R * 3.5) continue;
+          var fsteps = Math.floor(fdist / (R * 1.5));
+          for (var fk = 1; fk < fsteps; fk++) {
+            var fp = fk / fsteps;
+            ctx.beginPath();
+            ctx.arc(fax + fdx * fp, fay + fdy * fp, Math.max(1.5, scl * 1.8), 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fill();
+          }
+        }
 
+        /* Draw circles back-to-front (later index first so earlier notes render on top) */
+        for (var vi2 = visible.length - 1; vi2 >= 0; vi2--) {
+          var item   = visible[vi2];
+          var o2     = item.o;
+          var delta2 = item.delta;
+          var tp     = delta2 / pre;                          /* 1=just appeared, 0=hit */
+          var fadeIn = Math.min(1, (1 - tp) * 3.5);
+          var col2   = pal[(o2.combo - 1) % pal.length];
+          var px2    = offX + o2.x * scl;
+          var py2    = offY + o2.y * scl;
+
+          /* Approach ring: starts at 4R, closes to R */
+          ctx.globalAlpha = DIM * (0.5 + 0.5 * tp) * fadeIn;
           ctx.beginPath();
-          ctx.arc(c.x, c.y, approachR, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(' + c.col + ',' + approachA.toFixed(3) + ')';
-          ctx.lineWidth = 1.5;
+          ctx.arc(px2, py2, R * (1 + 3 * tp), 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(' + col2 + ',1)';
+          ctx.lineWidth   = Math.max(1.2, scl * 1.4);
           ctx.stroke();
 
+          /* Hit circle border */
+          ctx.globalAlpha = DIM * fadeIn;
           ctx.beginPath();
-          ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-          ctx.strokeStyle = c.strokeStyle;
-          ctx.lineWidth = 2;
+          ctx.arc(px2, py2, R, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(' + col2 + ',1)';
+          ctx.lineWidth   = Math.max(1.5, scl * 2.2);
           ctx.stroke();
 
+          /* Hit circle fill */
+          ctx.globalAlpha = DIM * 0.18 * fadeIn;
           ctx.beginPath();
-          ctx.arc(c.x, c.y, c.r * 0.82, 0, Math.PI * 2);
-          ctx.fillStyle = c.fillStyle;
+          ctx.arc(px2, py2, R * 0.88, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + col2 + ',1)';
           ctx.fill();
-        });
 
-        /* cull dead, spawn fresh replacements */
-        circles = circles.filter(function (c) { return !c.dead; });
-        for (var i = 0; i < toSpawn; i++) circles.push(makeCircle());
+          /* Combo number */
+          ctx.globalAlpha   = DIM * 0.9 * fadeIn;
+          ctx.font          = 'bold ' + Math.max(9, Math.round(R * 0.82)) + 'px "Exo 2",sans-serif';
+          ctx.textAlign     = 'center';
+          ctx.textBaseline  = 'middle';
+          ctx.fillStyle     = 'rgba(255,255,255,1)';
+          ctx.fillText(o2.cIdx + 1, px2, py2);
+        }
 
-        /* draw hit-light bursts — soft glow only, gradient cached at birth */
-        bursts = bursts.filter(function (b) {
-          var p = (now - b.born) / BURST_DUR;
-          if (p >= 1) return false;
-          ctx.globalAlpha = 1 - p * p;
+        /* Hit bursts */
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        bursts = bursts.filter(function(b) {
+          var bp = (now - b.born) / BURST_DUR;
+          if (bp >= 1) return false;
+          var ease = 1 - bp * bp;
+          var bR   = b.r * (1.4 + bp * 2.2);
+          var grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, bR);
+          grad.addColorStop(0,    'rgba(' + b.col + ',' + (DIM * 1.2 * ease).toFixed(3) + ')');
+          grad.addColorStop(0.45, 'rgba(' + b.col + ',' + (DIM * 0.5 * ease).toFixed(3) + ')');
+          grad.addColorStop(1,    'rgba(' + b.col + ',0)');
+          ctx.globalAlpha = 1;
           ctx.beginPath();
-          ctx.arc(b.x, b.y, b.glowR, 0, Math.PI * 2);
-          ctx.fillStyle = b.grad;
+          ctx.arc(b.x, b.y, bR, 0, Math.PI * 2);
+          ctx.fillStyle = grad;
           ctx.fill();
           return true;
         });
-        ctx.globalAlpha = 1;
+
+        /* Song label — faint, bottom-right */
+        ctx.globalAlpha  = DIM * 1.3;
+        ctx.font         = '11px "Exo 2",monospace';
+        ctx.textAlign    = 'right';
+        ctx.textBaseline = 'bottom';
+        ctx.fillStyle    = 'rgba(255,255,255,0.9)';
+        ctx.fillText(song.name + '  ♦  ' + Math.round(song.bpm) + ' BPM',
+                     canvas.width - 16, canvas.height - 12);
+        ctx.globalAlpha  = 1;
+        ctx.textAlign    = 'left';
+        ctx.textBaseline = 'alphabetic';
 
         requestAnimationFrame(draw);
       }
+
       requestAnimationFrame(draw);
     })();
 
@@ -1238,11 +1330,70 @@
         tab.addEventListener('click', function () {
           var target = this.dataset.tab;
           document.querySelectorAll('.olf-tab').forEach(function (t) { t.classList.remove('active'); });
+          document.querySelectorAll('.olf-tab-pane').forEach(function (p) { p.classList.remove('active'); });
           this.classList.add('active');
           var pane = document.getElementById(target);
-          if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (pane) pane.classList.add('active');
         });
       });
+    })();
+
+    /* ── about section: count-up stats + chart draw ── */
+    (function () {
+      var aboutAnimated = false;
+
+      function countUp(el, delay) {
+        var raw = el.textContent.trim();
+        var m = raw.match(/^(#?)([\d,]+(?:\.\d+)?)(%?)$/);
+        if (!m) return;
+        var prefix = m[1], numStr = m[2].replace(/,/g, ''), suffix = m[3];
+        var num = parseFloat(numStr);
+        if (isNaN(num) || num <= 0) return;
+        var isDecimal = numStr.includes('.');
+        var decPlaces = isDecimal ? (numStr.split('.')[1] || '').length : 0;
+        var duration = 1400;
+
+        function fmt(v) {
+          if (isDecimal) return v.toFixed(decPlaces);
+          return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        setTimeout(function () {
+          var t0 = performance.now();
+          el.textContent = prefix + (isDecimal ? (0).toFixed(decPlaces) : '0') + suffix;
+          requestAnimationFrame(function tick(now) {
+            var p = Math.min(1, (now - t0) / duration);
+            var ease = 1 - Math.pow(1 - p, 3);
+            el.textContent = prefix + fmt(num * ease) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = raw;
+          });
+        }, delay || 0);
+      }
+
+      window.triggerAboutAnimations = function () {
+        if (aboutAnimated) return;
+        aboutAnimated = true;
+
+        var base = 150;
+        document.querySelectorAll('.olf-rank-val').forEach(function (el, i) { countUp(el, base + i * 120); });
+        document.querySelectorAll('.olf-rs-v').forEach(function (el, i)    { countUp(el, base + i * 80); });
+        document.querySelectorAll('.olf-substat-v').forEach(function (el, i) { countUp(el, base + i * 100); });
+
+        var chartLine = document.querySelector('.olf-chart-line');
+        var chartArea = document.querySelector('.olf-chart-area');
+        if (chartLine) {
+          var len = Math.ceil(chartLine.getTotalLength());
+          chartLine.style.strokeDasharray = len;
+          chartLine.style.strokeDashoffset = len;
+          chartLine.getBoundingClientRect(); /* force reflow */
+          chartLine.style.strokeDashoffset = '0';
+        }
+        if (chartArea) {
+          chartArea.getBoundingClientRect();
+          chartArea.classList.add('drawn');
+        }
+      };
     })();
 
     /* ── scroll reveal inside active sections ── */
@@ -1288,20 +1439,34 @@
         inBackMode = true;
         cookie.classList.add('back-mode');
         cookie.setAttribute('aria-label', 'Back to menu');
-        /* wait for cookie to start moving, then fade section in */
         setTimeout(function () {
           if (activeSection) activeSection.classList.remove('active');
           section.classList.add('active');
           section.scrollTop = 0;
           activeSection = section;
-          section.querySelectorAll('.reveal').forEach(function (el, i) {
-            setTimeout(function () {
-              el.classList.add('visible');
-              el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
-                bar.style.width = bar.dataset.w + '%';
-              });
-            }, i * 90);
+
+          var reveals = Array.from(section.querySelectorAll('.reveal'));
+          reveals.forEach(function (el, i) {
+            gsap.set(el, { opacity: 0, y: 24 });
+            gsap.to(el, {
+              opacity: 1,
+              y: 0,
+              duration: 0.55,
+              ease: 'power2.out',
+              delay: 0.08 * i,
+              onComplete: function () {
+                el.classList.add('visible');
+                /* trigger skill bars only after their card is fully visible */
+                el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
+                  bar.style.width = bar.dataset.w + '%';
+                });
+              }
+            });
           });
+
+          if (section.id === 'about' && window.triggerAboutAnimations) {
+            setTimeout(window.triggerAboutAnimations, 350);
+          }
         }, 220);
       }
 
@@ -1398,13 +1563,13 @@
           lastScaleStr = scaleStr;
         }
 
-        /* drive glow div with transform only — compositor-only, zero repaint,
-           no box-shadow updates ever (those cause layer repaints = box flash) */
+        /* drive glow div with transform only — compositor-only, zero repaint.
+           getBoundingClientRect is called every frame so the glow tracks the
+           cookie through its CSS transitions (open, back-mode, resize). */
         if (glowDiv) {
           var rect = cookie.getBoundingClientRect();
           var dx = Math.round(rect.left + rect.width  * 0.5 - window.innerWidth  * 0.5);
           var dy = Math.round(rect.top  + rect.height * 0.5 - window.innerHeight * 0.5);
-          /* map curGlow 38-110 → scale 0.92-1.36 so it never gets absurdly large */
           var gs = (0.7 + curGlow * 0.006).toFixed(3);
           var tf = 'translate(' + dx + 'px,' + dy + 'px) scale(' + gs + ')';
           if (tf !== lastGlowTransform) {
@@ -1455,11 +1620,25 @@
     (function () {
       var intro      = document.getElementById('osu-intro');
       var welcome    = document.getElementById('osu-welcome-wrap');
+      var ring       = document.getElementById('osu-welcome-ring');
+      var text       = document.getElementById('osu-welcome-text');
       var mainCookie = document.getElementById('osu-main-cookie');
 
-      /* 1. Welcome! grows in (animation already running via CSS) */
+      /* ── Master intro timeline ── */
+      var tl = gsap.timeline();
 
-      /* ── hit circles: spawn 8 circles timed to the expanding ring ── */
+      /* Ring: scale 0.42→1 with slight overshoot, then drift out to 1.3 */
+      tl.to(ring, { opacity: 1, scale: 1,   duration: 0.62, ease: 'back.out(1.4)' },      0.1)
+        .to(ring, { scale: 0.97,             duration: 0.45, ease: 'power1.inOut' },      '-=0.1')
+        .to(ring, { scale: 1.3, opacity: 0.65, duration: 1.75, ease: 'power1.in' },      '+=0')
+
+      /* Welcome text fades in slightly after ring appears */
+      tl.fromTo(text,
+        { opacity: 0, y: 6 },
+        { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' },
+        0.45);
+
+      /* ── Hit circles: spawn 8 circles timed to the expanding ring ── */
       /* Ring radius math: fast phase 88px→210px over 616ms, then slow phase to 273px */
       var hcDefs = [
         { dist: 110, angle:  30, num: 1 },
@@ -1471,16 +1650,14 @@
         { dist: 205, angle: 255, num: 7 },
         { dist: 210, angle: 345, num: 8 }
       ];
-      /* linear interpolation: ring radius → elapsed ms */
       function ringTime(r) {
         if (r <= 210) return (r - 88) / (210 - 88) * 616;
         return 616 + (r - 210) / (273 - 210) * 1736;
       }
-      var cx = 210, cy = 210; /* center of the 420x420 wrap */
+      var cx = 210, cy = 210;
       hcDefs.forEach(function (def) {
-        var hitMs  = ringTime(def.dist) + 100; /* +100ms offset for ring start delay */
-        var spawnMs = hitMs - 220;             /* body fades in 220ms before hit */
-        var approachDur = 220 + spawnMs;       /* approach ring shrinks from spawn to hit */
+        var hitMs   = ringTime(def.dist) + 100;
+        var spawnMs = hitMs - 220;
         var rad = def.angle * Math.PI / 180;
         var x   = cx + def.dist * Math.cos(rad);
         var y   = cy + def.dist * Math.sin(rad);
@@ -1503,31 +1680,26 @@
           hc.appendChild(body);
           welcome.appendChild(hc);
 
-          /* trigger hit burst when ring arrives */
           setTimeout(function () { hc.classList.add('hit'); }, hitMs - spawnMs);
-          /* remove element after burst */
           setTimeout(function () { if (hc.parentNode) hc.parentNode.removeChild(hc); }, hitMs - spawnMs + 500);
         }, Math.max(0, spawnMs));
       });
 
-      /* 2. RC pops in at 1.5s — simultaneous with Welcome! starting to fade */
-      setTimeout(function () {
-        if (mainCookie) {
-          mainCookie.classList.remove('osu-pre-slam');
-          mainCookie.classList.add('osu-slam-active');
-        }
-        /* fade Welcome! out as RC expands over it */
-        welcome.style.animation = 'osu-cookie-out 0.35s ease forwards';
-      }, 1500);
+      /* RC cookie slams in at 1.5s — welcome fades out simultaneously */
+      tl.call(function () {
+        mainCookie.classList.remove('osu-pre-slam');
+        mainCookie.classList.add('osu-slam-active');
+        gsap.to(welcome, { opacity: 0, scale: 0.86, duration: 0.32, ease: 'power1.in' });
+      }, null, 1.5);
 
-      /* 3. Fade the dark overlay out once slam settles (~2.1s) */
-      setTimeout(function () {
-        intro.style.animation = 'osu-bg-out 0.55s ease forwards';
-        setTimeout(function () {
-          intro.remove();
-          if (mainCookie) mainCookie.classList.remove('osu-slam-active');
-        }, 560);
-      }, 2080);
+      /* Dark overlay fades out once slam settles */
+      tl.to(intro, { opacity: 0, duration: 0.55, ease: 'power1.inOut' }, 2.08);
+
+      /* Cleanup */
+      tl.call(function () {
+        intro.remove();
+        mainCookie.classList.remove('osu-slam-active');
+      }, null, 2.65);
     })();
   </script>
 </body>
