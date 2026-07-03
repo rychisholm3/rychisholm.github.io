@@ -1,7 +1,7 @@
 :root {
   --bg: #090c12;
   --bg-soft: #0f1420;
-  --card: rgba(17, 24, 39, 0.8);
+  --card: rgba(17, 24, 39, 0.94);
   --card-strong: rgba(15, 22, 35, 0.95);
   --text: #edf2fb;
   --muted: #a7b3c7;
@@ -187,7 +187,6 @@ img {
   border: 1px solid rgba(255, 78, 154, 0.1);
   border-radius: 22px;
   background: var(--card);
-  backdrop-filter: blur(10px);
   box-shadow: var(--shadow);
   transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
 }
@@ -455,11 +454,10 @@ img {
   }
 }
 
-/* ── scroll reveal ── */
+/* ── scroll reveal — GSAP drives opacity/transform; .visible is fallback only ── */
 .reveal {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
 }
 .reveal.visible {
   opacity: 1;
@@ -553,8 +551,7 @@ img {
   gap: 0;
   border: 1px solid rgba(255, 78, 154, 0.12);
   border-radius: 18px;
-  background: rgba(15, 12, 28, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(15, 12, 28, 0.96);
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0,0,0,0.35);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
@@ -684,8 +681,7 @@ img {
   padding: 1.35rem;
   border: 1px solid rgba(255, 78, 154, 0.12);
   border-radius: 18px;
-  background: rgba(15, 12, 28, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(15, 12, 28, 0.96);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
@@ -776,8 +772,7 @@ img {
   padding: 1.3rem;
   border: 1px solid rgba(255, 78, 154, 0.12);
   border-radius: 18px;
-  background: rgba(15, 12, 28, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(15, 12, 28, 0.96);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
@@ -859,8 +854,7 @@ img {
 .osu-profile-card {
   border: 1px solid rgba(255, 78, 154, 0.15);
   border-radius: 22px;
-  background: rgba(15, 12, 28, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(15, 12, 28, 0.96);
   box-shadow: 0 8px 40px rgba(0,0,0,0.35);
   padding: 2rem;
 }
@@ -955,8 +949,7 @@ img {
 .osu-dm-card {
   border: 1px solid rgba(255, 78, 154, 0.15);
   border-radius: 22px;
-  background: rgba(15, 12, 28, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(15, 12, 28, 0.96);
   box-shadow: 0 8px 40px rgba(0,0,0,0.35);
   padding: 2rem;
 }
@@ -1111,11 +1104,27 @@ img {
 .olf-cover { height: 260px; position: relative; overflow: hidden; }
 .olf-cover-bg {
   width: 100%; height: 100%;
+  position: relative;
   background: linear-gradient(135deg, #130822 0%, #3b0d6e 25%, #7218a0 50%, #c4195f 75%, #ff4e9a 100%);
 }
 .olf-cover-bg::after {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(to bottom, transparent 50%, rgba(28,22,40,0.85) 100%);
+  z-index: 1;
+}
+.olf-cover-bg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 35%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  transform: skewX(-20deg);
+  animation: olf-cover-shimmer 5.5s 0.8s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes olf-cover-shimmer {
+  0%   { left: -60%; }
+  100% { left: 130%; }
 }
 
 /* ── Profile head (avatar + username, overlaps cover) ── */
@@ -1176,8 +1185,9 @@ img {
   border-right: 1px solid rgba(255,255,255,0.06);
 }
 .olf-chart-svg { width: 100%; height: 110px; display: block; overflow: visible; }
-.olf-chart-area { fill: url(#rankGrad); }
-.olf-chart-line { fill: none; stroke: rgba(255,78,154,0.85); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.olf-chart-area { fill: url(#rankGrad); opacity: 0; transition: opacity 0.9s 0.5s ease; }
+.olf-chart-area.drawn { opacity: 1; }
+.olf-chart-line { fill: none; stroke: rgba(255,78,154,0.85); stroke-width: 2; vector-effect: non-scaling-stroke; transition: stroke-dashoffset 1.5s 0.2s cubic-bezier(0.22,1,0.36,1); }
 
 .olf-right-stats { padding: 0; }
 .olf-rs-row {
@@ -1275,7 +1285,9 @@ img {
 .olf-tab:hover { color: rgba(255,255,255,0.65); }
 .olf-tab.active { color: #fff; border-bottom-color: var(--osu-pink); }
 
-.olf-tab-pane { display: block; padding: 1.5rem 1.75rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.olf-tab-pane { display: none; padding: 1.5rem 1.75rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.olf-tab-pane.active { display: block; animation: olf-tab-in 0.22s ease both; }
+@keyframes olf-tab-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
 /* ── me! tab ── */
 .olf-bio { max-width: none; }
