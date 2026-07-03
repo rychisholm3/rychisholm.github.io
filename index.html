@@ -1412,21 +1412,6 @@
       };
     })();
 
-    /* ── scroll reveal inside active sections ── */
-    (function () {
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            entry.target.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
-              bar.style.width = bar.dataset.w + '%';
-            });
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-      document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
-    })();
 
     (function () {
       var cookie    = document.getElementById('osu-main-cookie');
@@ -1461,6 +1446,12 @@
           section.scrollTop = 0;
           activeSection = section;
 
+          /* Reset skill bars without transition so they can animate on card entry */
+          section.querySelectorAll('.osu-sb-fill').forEach(function (bar) {
+            bar.style.transition = 'none';
+            bar.style.width = '0';
+          });
+
           var reveals = Array.from(section.querySelectorAll('.reveal'));
           reveals.forEach(function (el, i) {
             gsap.set(el, { opacity: 0, y: 24 });
@@ -1472,8 +1463,8 @@
               delay: 0.08 * i,
               onComplete: function () {
                 el.classList.add('visible');
-                /* trigger skill bars only after their card is fully visible */
                 el.querySelectorAll('.osu-sb-fill[data-w]').forEach(function (bar) {
+                  bar.style.transition = ''; /* restore CSS transition */
                   bar.style.width = bar.dataset.w + '%';
                 });
               }
@@ -1495,7 +1486,8 @@
       }
 
       nav.querySelectorAll('.osu-nav-btn').forEach(function(btn){
-        btn.addEventListener('click', function(){
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
           var targetId = (btn.getAttribute('href') || '').replace('#','');
           var section = targetId ? document.getElementById(targetId) : null;
           if (section) openSection(section);
@@ -1550,7 +1542,7 @@
 
       /* ── beat animation loop (runs always) ── */
       var t = 0, curScale = 1, curGlow = 50;
-      var lastGlowInt = -1, lastScaleStr = '';
+      var lastScaleStr = '';
       var glowDiv = document.getElementById('cookie-glow-bg');
       var lastGlowTransform = '';
 
