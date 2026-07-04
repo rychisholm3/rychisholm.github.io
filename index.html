@@ -106,16 +106,22 @@
       width: 420px; height: 420px;
       border-radius: 50%;
       background:
-        repeating-linear-gradient( 60deg, transparent, transparent 8px, rgba(255,255,255,0.022) 8px, rgba(255,255,255,0.022) 16px),
-        repeating-linear-gradient(-60deg, transparent, transparent 8px, rgba(255,255,255,0.022) 8px, rgba(255,255,255,0.022) 16px),
-        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.14) 0%, transparent 52%),
+        repeating-linear-gradient( 60deg, transparent, transparent 8px, rgba(255,255,255,0.016) 8px, rgba(255,255,255,0.016) 16px),
+        repeating-linear-gradient(-60deg, transparent, transparent 8px, rgba(255,255,255,0.016) 8px, rgba(255,255,255,0.016) 16px),
+        radial-gradient(ellipse at 28% 18%, rgba(255,255,255,0.26) 0%, transparent 44%),
+        radial-gradient(ellipse at 72% 82%, rgba(100,0,40,0.35) 0%, transparent 48%),
         radial-gradient(circle at 38% 36%, #ff94cc, #e2006a 46%, #8e0039 100%);
-      border: 5px solid rgba(255,255,255,0.96);
+      border: 4px solid rgba(255,255,255,0.88);
       box-shadow:
-        inset 0 0 0 3px rgba(255,130,195,0.22),
-        0 0 0 2px rgba(255,60,130,0.45),
-        0 0 55px rgba(255,51,130,0.9),
-        0 0 130px rgba(255,51,130,0.42);
+        inset 0 0 0 2px rgba(255,180,215,0.28),
+        inset 0 -90px 120px rgba(110,0,55,0.38),
+        inset 0  90px  90px rgba(255,200,230,0.09),
+        0 0 0 1px rgba(255,110,170,0.7),
+        0 0 0 4px rgba(255,50,120,0.22),
+        0 0 40px  rgba(255,51,130,1),
+        0 0 90px  rgba(255,51,130,0.88),
+        0 0 180px rgba(255,51,130,0.52),
+        0 0 340px rgba(200,40,120,0.24);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -131,13 +137,14 @@
        the browser composites it without any repaint (no box artifact) */
     #cookie-glow-bg {
       position: fixed;
-      width: 800px; height: 800px;
+      width: 900px; height: 900px;
       top: 50%; left: 50%;
-      margin: -400px 0 0 -400px;
+      margin: -450px 0 0 -450px;
       border-radius: 50%;
       background: radial-gradient(circle,
-        rgba(255,51,130,0.26) 0%,
-        rgba(255,51,130,0.10) 35%,
+        rgba(255,51,130,0.32) 0%,
+        rgba(220,40,120,0.16) 28%,
+        rgba(160,20,100,0.06) 55%,
         transparent 70%
       );
       pointer-events: none;
@@ -171,43 +178,50 @@
       top: 50%;
       transform: translateY(-50%);
     }
-    /* Inner decorative ring + radial segment lines */
+    /* Inner decorative ring — 36 fine tick marks */
     .osu-main-cookie::before {
       content: '';
       position: absolute;
       inset: 18px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.32);
+      border: 1.5px solid rgba(255,255,255,0.28);
       background: repeating-conic-gradient(
         from 0deg,
-        transparent 0deg 44deg,
-        rgba(255,255,255,0.038) 44deg 45deg
+        transparent 0deg 9deg,
+        rgba(255,255,255,0.055) 9deg 10deg
       );
       pointer-events: none;
       transition: opacity 0.4s ease;
-      animation: cookie-ring-breathe 3.8s ease-in-out infinite;
+      animation: cookie-ring-breathe 4s ease-in-out infinite;
     }
-    /* Top-center pip — 12 o'clock mark */
+    /* Rotating halo arc — sweeping gloss highlight around the border */
     .osu-main-cookie::after {
       content: '';
       position: absolute;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 9px; height: 9px;
+      inset: -3px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 0 10px rgba(255,200,230,0.9), 0 0 24px rgba(255,100,170,0.55);
+      background: conic-gradient(
+        from 0deg,
+        transparent          0deg 296deg,
+        rgba(255,240,255,0.04) 300deg,
+        rgba(255,225,242,0.9)  308deg 315deg,
+        rgba(255,240,255,0.04) 319deg,
+        transparent          323deg 360deg
+      );
+      animation: cookie-halo-sweep 5.5s linear infinite;
       pointer-events: none;
       transition: opacity 0.4s ease;
     }
     .osu-main-cookie.back-mode::before,
     .osu-main-cookie.back-mode::after { opacity: 0; }
     @keyframes cookie-ring-breathe {
-      /* combined breathe + slow spin — both transform: compositor-only, zero repaint */
-      0%   { transform: scale(0.975) rotate(0deg);   opacity: 0.55; }
-      50%  { transform: scale(1.005) rotate(180deg); opacity: 1;    }
-      100% { transform: scale(0.975) rotate(360deg); opacity: 0.55; }
+      0%   { transform: scale(0.975) rotate(0deg);   opacity: 0.5; }
+      50%  { transform: scale(1.005) rotate(180deg); opacity: 0.95; }
+      100% { transform: scale(0.975) rotate(360deg); opacity: 0.5; }
+    }
+    @keyframes cookie-halo-sweep {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
     }
     /* ── Rotating inner ring (separate element, no pseudo conflict) ── */
     .cookie-inner-ring {
@@ -320,26 +334,82 @@
     .osu-main-cookie-inner {
       display: flex; flex-direction: column; align-items: center; pointer-events: none;
       position: relative; z-index: 1;
+      animation: cookie-inner-float 3.4s ease-in-out infinite;
+    }
+    @keyframes cookie-inner-float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-8px); }
     }
     .osu-initials {
-      color: #fff;
       font-family: 'Exo 2', Inter, system-ui, sans-serif;
       font-size: 5rem; font-weight: 900; font-style: italic;
       letter-spacing: 0.06em; line-height: 1;
-      text-shadow:
-        0 0 18px rgba(255,160,210,0.85),
-        0 0 45px rgba(255,80,160,0.45),
-        0 0 90px rgba(255,50,140,0.2),
-        0 3px 12px rgba(0,0,0,0.6);
+      display: inline-block;
+      background: linear-gradient(155deg,
+        #ffd0e8 0%,
+        #ffffff 38%,
+        #ffaadb 68%,
+        #ffe5f3 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter:
+        drop-shadow(0 0 16px rgba(255,85,165,1))
+        drop-shadow(0 0 42px rgba(255,50,140,0.7))
+        drop-shadow(0 0 80px rgba(255,30,120,0.35))
+        drop-shadow(0 3px 10px rgba(0,0,0,0.6));
     }
     .osu-name-sub {
-      color: rgba(255,255,255,0.68);
       font-family: 'Exo 2', Inter, system-ui, sans-serif;
       font-size: 0.58rem; font-weight: 400;
-      letter-spacing: 0.26em; text-transform: uppercase; margin-top: 0.7rem;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+      letter-spacing: 0.32em; text-transform: uppercase; margin-top: 0.75rem;
+      display: inline-block;
+      background: linear-gradient(90deg,
+        rgba(255,175,210,0.55) 0%,
+        rgba(255,255,255,0.92) 50%,
+        rgba(255,175,210,0.55) 100%
+      );
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: sub-text-shine 4.5s linear infinite;
+    }
+    @keyframes sub-text-shine {
+      from { background-position: 0% center; }
+      to   { background-position: 220% center; }
     }
     /* music indicator */
+    /* ── Cookie surface shimmer ── */
+    .cookie-shimmer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      background: linear-gradient(128deg,
+        transparent     0%,
+        transparent    30%,
+        rgba(255,255,255,0.055) 40%,
+        rgba(255,255,255,0.14)  50%,
+        rgba(255,255,255,0.055) 60%,
+        transparent    70%,
+        transparent   100%
+      );
+      animation: cookie-shimmer-sweep 5.5s ease-in-out infinite;
+      animation-delay: 0.8s;
+    }
+    @keyframes cookie-shimmer-sweep {
+      0%        { transform: rotate(-38deg) scale(0.96); opacity: 0; }
+      12%       { opacity: 1; }
+      50%       { transform: rotate( 42deg) scale(1.04); opacity: 1; }
+      88%       { opacity: 1; }
+      100%      { transform: rotate(122deg) scale(0.96); opacity: 0; }
+    }
+    .osu-main-cookie.back-mode .cookie-shimmer { opacity: 0; }
     .osu-music-ind {
       position: fixed; top: 1.4rem; right: 1.8rem;
       color: rgba(255,255,255,0.2);
@@ -488,6 +558,7 @@
       .osu-nav.open .osu-nav-btn:nth-child(5) { transform: translateY(0) scale(1); }
       .cookie-orbit-track { display: none; }
       .cookie-inner-ring { display: none; }
+      .cookie-shimmer { display: none; }
     }
   </style>
 </head>
@@ -509,6 +580,7 @@
          role="button" tabindex="0"
          aria-expanded="false" aria-controls="osu-nav"
          aria-label="Open navigation menu">
+      <div class="cookie-shimmer"></div>
       <div class="cookie-inner-ring"></div>
       <div class="cookie-orbit-track cookie-orbit-track-1"><div class="cookie-orbit-dot"></div></div>
       <div class="cookie-orbit-track cookie-orbit-track-2"><div class="cookie-orbit-dot"></div></div>
