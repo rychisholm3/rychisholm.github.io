@@ -89,6 +89,28 @@
     @keyframes osu-bg-out     { from { opacity:1; }                        to { opacity:0; } }
     @media (prefers-reduced-motion: reduce) { #osu-intro { display: none; } }
 
+    /* ── reveal punctuation: a quick flash + shockwave right as the intro lifts,
+       so the cut to the main menu lands with some impact instead of a plain fade ── */
+    #osu-flash {
+      position: fixed; inset: 0;
+      z-index: 10000;
+      background: radial-gradient(circle at 50% 50%,
+        rgba(255,255,255,0.95) 0%, rgba(255,210,235,0.55) 32%, transparent 68%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    #osu-shockwave {
+      position: fixed; top: 50%; left: 50%;
+      width: 40px; height: 40px;
+      margin: -20px 0 0 -20px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.9);
+      box-shadow: 0 0 40px rgba(255,150,200,0.85), 0 0 90px rgba(255,80,160,0.5);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
     /* ── osu! main menu landing ── */
     .osu-landing {
       position: relative;
@@ -105,23 +127,21 @@
       z-index: 100;
       width: 420px; height: 420px;
       border-radius: 50%;
+      /* clip-path matches the visual circle so the tabs can sit BEHIND the
+         cookie in z-order and still receive clicks outside the drawn disc —
+         border-radius alone only rounds the paint, not the hit-test box */
+      clip-path: circle(50%);
+      /* flat osu! hit-circle fill — one soft highlight, no glossy-sphere texture */
       background:
-        repeating-linear-gradient( 60deg, transparent, transparent 8px, rgba(255,255,255,0.016) 8px, rgba(255,255,255,0.016) 16px),
-        repeating-linear-gradient(-60deg, transparent, transparent 8px, rgba(255,255,255,0.016) 8px, rgba(255,255,255,0.016) 16px),
-        radial-gradient(ellipse at 28% 18%, rgba(255,255,255,0.26) 0%, transparent 44%),
-        radial-gradient(ellipse at 72% 82%, rgba(100,0,40,0.35) 0%, transparent 48%),
-        radial-gradient(circle at 38% 36%, #ff94cc, #e2006a 46%, #8e0039 100%);
-      border: 4px solid rgba(255,255,255,0.88);
+        radial-gradient(circle at 32% 26%, rgba(255,255,255,0.30) 0%, transparent 38%),
+        radial-gradient(circle at 50% 54%, #ff418f 0%, #e2006a 58%, #97002f 100%);
+      border: 6px solid rgba(255,255,255,0.94);
       box-shadow:
-        inset 0 0 0 2px rgba(255,180,215,0.28),
-        inset 0 -90px 120px rgba(110,0,55,0.38),
-        inset 0  90px  90px rgba(255,200,230,0.09),
-        0 0 0 1px rgba(255,110,170,0.7),
-        0 0 0 4px rgba(255,50,120,0.22),
-        0 0 40px  rgba(255,51,130,1),
-        0 0 90px  rgba(255,51,130,0.88),
-        0 0 180px rgba(255,51,130,0.52),
-        0 0 340px rgba(200,40,120,0.24);
+        inset 0 -30px 60px rgba(90,0,40,0.35),
+        inset 0 2px 0 rgba(255,255,255,0.2),
+        0 0 0 3px rgba(255,60,140,0.45),
+        0 0 46px  rgba(255,51,130,0.85),
+        0 0 110px rgba(255,51,130,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -133,23 +153,127 @@
                   height 0.65s cubic-bezier(0.22,1,0.36,1);
       user-select: none;
     }
-    /* cookie ambient glow — fixed size, animator uses transform:scale so
-       the browser composites it without any repaint (no box artifact) */
+    /* cookie ambient glow — compositor layer, no repaint */
     #cookie-glow-bg {
       position: fixed;
-      width: 900px; height: 900px;
+      width: 960px; height: 960px;
       top: 50%; left: 50%;
-      margin: -450px 0 0 -450px;
+      margin: -480px 0 0 -480px;
       border-radius: 50%;
       background: radial-gradient(circle,
-        rgba(255,51,130,0.32) 0%,
-        rgba(220,40,120,0.16) 28%,
-        rgba(160,20,100,0.06) 55%,
-        transparent 70%
+        rgba(255,51,130,0.34) 0%,
+        rgba(230,40,130,0.18) 24%,
+        rgba(140,20,160,0.08) 48%,
+        transparent 68%
       );
       pointer-events: none;
-      z-index: 2;
+      z-index: 5;
       will-change: transform;
+    }
+    /* ── Ambient floating orbs — background depth ── */
+    .osu-ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;
+      overflow: hidden;
+    }
+    .osu-orb {
+      position: absolute;
+      border-radius: 50%;
+    }
+    .osu-orb-1 {
+      width: 760px; height: 760px;
+      top: -200px; right: -120px;
+      background: radial-gradient(circle, rgba(255,51,130,0.075) 0%, transparent 62%);
+      animation: orb-drift-a 22s ease-in-out infinite;
+    }
+    .osu-orb-2 {
+      width: 520px; height: 520px;
+      bottom: -80px; left: 4%;
+      background: radial-gradient(circle, rgba(130,60,255,0.065) 0%, transparent 62%);
+      animation: orb-drift-b 28s ease-in-out infinite;
+      animation-delay: -12s;
+    }
+    .osu-orb-3 {
+      width: 340px; height: 340px;
+      top: 25%; right: 18%;
+      background: radial-gradient(circle, rgba(60,160,255,0.055) 0%, transparent 62%);
+      animation: orb-drift-c 19s ease-in-out infinite;
+      animation-delay: -7s;
+    }
+    @keyframes orb-drift-a {
+      0%, 100% { transform: translate(0px,   0px); }
+      50%       { transform: translate(-50px, 38px); }
+    }
+    @keyframes orb-drift-b {
+      0%, 100% { transform: translate(0px,  0px); }
+      50%       { transform: translate(44px,-32px); }
+    }
+    @keyframes orb-drift-c {
+      0%, 100% { transform: translate(0px,  0px); }
+      50%       { transform: translate(-30px,22px); }
+    }
+    /* ── Floating beatmap-panel field: generated original gradient "cover art"
+       (no real artwork), grouped into 3 depth layers. Mouse parallax moves the
+       3 layer transforms, not each of the ~45 panels — cheap regardless of count. */
+    #osu-parallax-bg {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      perspective: 1400px;
+    }
+    .pf-layer {
+      position: absolute; inset: -12%;
+      will-change: transform;
+      transition: transform 0.1s linear;
+    }
+    .pf-far  { z-index: 2; }
+    .pf-mid  { z-index: 3; }
+    .pf-near { z-index: 4; }
+    .pf-card {
+      position: absolute;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.4);
+      overflow: hidden;
+      animation: pf-drift linear infinite;
+      animation-duration: var(--pf-dur, 30s);
+      animation-delay: var(--pf-delay, 0s);
+    }
+    .pf-far  .pf-card { filter: blur(2px);   opacity: 0.16; }
+    .pf-mid  .pf-card { filter: blur(0.4px); opacity: 0.24; }
+    .pf-near .pf-card { opacity: 0.34; box-shadow: 0 16px 38px rgba(0,0,0,0.5); }
+    .pf-card-art { position: absolute; inset: 0; }
+    /* procedural grain so the generated gradients read as textured art, not flat toy blocks */
+    .pf-card-art::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 120px 120px;
+      mix-blend-mode: overlay;
+      opacity: 0.45;
+    }
+    .pf-card-art::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(125deg, rgba(255,255,255,0.22) 0%, transparent 40%),
+                  radial-gradient(ellipse at 50% 115%, rgba(0,0,0,0.55) 0%, transparent 60%);
+    }
+    /* faint star rating, every card gets one */
+    .pf-card-label {
+      position: absolute; left: 0; right: 0; bottom: 0.45rem;
+      text-align: center;
+      font-size: 0.6rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.45);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      pointer-events: none;
+    }
+    @keyframes pf-drift {
+      0%, 100% { transform: translate(0,0) rotate(0deg); }
+      50%      { transform: translate(var(--pf-dx, 18px), var(--pf-dy, -14px)) rotate(var(--pf-rot, 1.1deg)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pf-card { animation: none; }
+      .pf-layer { transition: none; }
     }
     /* menu open: grow + slide left so nav tabs are visually centred */
     .osu-main-cookie.open {
@@ -184,38 +308,24 @@
       position: absolute;
       inset: 20px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.22);
       background: repeating-conic-gradient(
         from 0deg,
         transparent 0deg 27deg,
-        rgba(255,255,255,0.07) 27deg 30deg
+        rgba(255,255,255,0.16) 27deg 30deg
       );
+      /* confine the tick pattern to a thin band at the rim — without this mask
+         the conic-gradient radiates as spokes across the whole face */
+      mask-image: radial-gradient(circle, transparent 0%, transparent 84%, black 88%, black 100%);
+      -webkit-mask-image: radial-gradient(circle, transparent 0%, transparent 84%, black 88%, black 100%);
       pointer-events: none;
       transition: opacity 0.4s ease;
-      animation: cookie-ring-breathe 3.8s ease-in-out infinite;
+      animation: cookie-ring-breathe 2.6s ease-in-out infinite;
     }
-    /* 12 o'clock pip */
-    .osu-main-cookie::after {
-      content: '';
-      position: absolute;
-      top: 26px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.95);
-      box-shadow:
-        0 0 6px  rgba(255,255,255,0.9),
-        0 0 14px rgba(255,180,220,0.85),
-        0 0 30px rgba(255,100,170,0.55);
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-    }
-    .osu-main-cookie.back-mode::before,
-    .osu-main-cookie.back-mode::after { opacity: 0; }
+    .osu-main-cookie.back-mode::before { opacity: 0; }
     @keyframes cookie-ring-breathe {
-      0%, 100% { transform: scale(0.974); opacity: 0.42; }
-      50%       { transform: scale(1.008); opacity: 1; }
+      0%, 100% { transform: scale(0.956); opacity: 0.30; }
+      50%       { transform: scale(1.018); opacity: 0.95; }
     }
     /* ── Beat ripple — one clean ring per strong beat ── */
     .cookie-beat-ripple {
@@ -230,6 +340,24 @@
     @keyframes cookie-ripple-expand {
       0%   { transform: scale(1);    opacity: 0.78; }
       100% { transform: scale(1.42); opacity: 0;    }
+    }
+    /* ── Approach ring — real osu! mechanic: a ring shrinks IN from outside
+       and lands exactly on the circle's edge on the beat, then fades.
+       This is the primary "reacts to music" motion, replacing a generic pulse. ── */
+    .cookie-approach-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.85);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      animation: cookie-approach-shrink 0.62s cubic-bezier(0.15,0.6,0.25,1) forwards;
+    }
+    @keyframes cookie-approach-shrink {
+      0%   { transform: scale(1.85); opacity: 0;    }
+      18%  { opacity: 0.9; }
+      100% { transform: scale(1);    opacity: 0;    }
     }
     /* ── Click ripple — menu open impact ── */
     .cookie-click-ripple {
@@ -252,7 +380,7 @@
     }
     @keyframes cookie-inner-float {
       0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-6px); }
+      50%       { transform: translateY(-10px); }
     }
     .osu-initials {
       color: #fff;
@@ -289,6 +417,11 @@
       position: absolute;
       top: 50%;
       left: 50%;
+      /* BELOW the cookie (100) on purpose — the pennants' tucked-in points
+         render behind the circle so each tab visually emerges from under it.
+         Works cleanly because .osu-main-cookie has clip-path:circle(50%),
+         so its hit-testing matches the visible disc instead of its square box. */
+      z-index: 90;
       transition: left 0.65s cubic-bezier(0.22,1,0.36,1);
       pointer-events: none;
     }
@@ -296,65 +429,113 @@
     .osu-nav.open {
       left: calc(50% - 110px);
     }
+    /* Tabs are cut as pennants — a tapered point tucks behind the circle's
+       rim so the tab visually emerges from it, rather than floating beside it. */
     .osu-nav-btn {
       position: absolute;
       left: 0; top: 0;
-      width: 270px;
-      padding: 1rem 1.5rem 1rem 1.4rem;
+      width: 322px;
+      padding: 1.15rem 1.85rem 1.15rem 2.6rem;
+      display: flex; align-items: center; justify-content: flex-end; gap: 0.85rem;
       text-align: right;
-      background: rgba(12, 14, 22, 0.82);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-left: 3px solid rgba(255, 100, 175, 0.5);
-      border-radius: 18px;
-      color: rgba(215, 228, 255, 0.92);
+      clip-path: polygon(8% 0%, 100% 0%, 100% 100%, 8% 100%, 0% 50%);
+      background:
+        linear-gradient(125deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.03) 30%, transparent 56%),
+        linear-gradient(to left, transparent 58%, var(--btn-accent, rgba(255,100,175,0.6)) 100%),
+        rgba(14, 10, 18, 0.6);
+      backdrop-filter: blur(18px) saturate(170%);
+      -webkit-backdrop-filter: blur(18px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #fff;
       font-family: 'Exo 2', Inter, system-ui, sans-serif;
-      font-weight: 700; font-size: 1.05rem; letter-spacing: 0.06em;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+      font-weight: 800; font-size: 1.32rem; letter-spacing: 0.03em;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 0 22px rgba(0,0,0,0.45);
+      box-shadow:
+        0 12px 34px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.4),
+        inset 0 -18px 26px rgba(0,0,0,0.2);
       opacity: 0;
-      transform: translate(20px, -26px) scale(0.15);
-      transition: transform 0.42s cubic-bezier(0.22,1,0.36,1), opacity 0.28s ease,
-                  background 0.22s ease, border-color 0.22s ease;
+      transform: translate(20px, -26px) scale(0.12);
+      transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.30s ease, box-shadow 0.25s ease;
       pointer-events: none; text-decoration: none;
       white-space: nowrap; overflow: hidden;
       will-change: transform, opacity;
     }
+    /* diamond marker — echoes osu!'s diamond mod icons */
+    .osu-nav-btn::before {
+      content: '';
+      flex: 0 0 auto;
+      width: 9px; height: 9px;
+      background: var(--btn-accent, rgba(255,120,190,1));
+      transform: rotate(45deg);
+      box-shadow: 0 0 10px var(--btn-accent, rgba(255,120,190,1)), inset 0 0 0 1px rgba(255,255,255,0.7);
+    }
+    /* shimmer sweep on hover — matches the cover-art shimmer used elsewhere on the site */
+    .osu-nav-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.4) 48%, transparent 66%);
+      transform: translateX(-120%);
+      transition: transform 0.65s ease;
+      pointer-events: none;
+    }
+    .osu-nav-btn:hover::after { transform: translateX(120%); }
+    /* Per-section accent colors — echoes osu! lazer button palette */
+    .osu-nav-btn:nth-child(1) { --btn-accent: rgba(78,201,176,0.92); }
+    .osu-nav-btn:nth-child(2) { --btn-accent: rgba(199,146,234,0.92); }
+    .osu-nav-btn:nth-child(3) { --btn-accent: rgba(247,140,108,0.92); }
+    .osu-nav-btn:nth-child(4) { --btn-accent: rgba(137,221,255,0.92); }
+    .osu-nav-btn:nth-child(5) { --btn-accent: rgba(255,120,196,0.92); }
     .osu-nav.open { pointer-events: auto; }
     .osu-nav.open .osu-nav-btn { opacity: 1; pointer-events: auto; }
-    /* fan positions: 75px center-to-center spacing scaled for 460px open cookie */
-    /* fan: x = circle_edge_at_y − offset so each tab starts well inside the cookie */
-    .osu-nav.open .osu-nav-btn:nth-child(1) { transform: translate( 78px, -176px); transition-delay: 0.00s; }
-    .osu-nav.open .osu-nav-btn:nth-child(2) { transform: translate(122px, -101px); transition-delay: 0.05s; }
-    .osu-nav.open .osu-nav-btn:nth-child(3) { transform: translate(136px,  -26px); transition-delay: 0.10s; }
-    .osu-nav.open .osu-nav-btn:nth-child(4) { transform: translate(122px,   49px); transition-delay: 0.15s; }
-    .osu-nav.open .osu-nav-btn:nth-child(5) { transform: translate( 78px,  124px); transition-delay: 0.20s; }
+    /* fan: pulled in so each pennant's point tucks just inside the circle's rim */
+    .osu-nav.open .osu-nav-btn:nth-child(1) { transform: translate( 55px,-210px); transition-delay: 0.00s; }
+    .osu-nav.open .osu-nav-btn:nth-child(2) { transform: translate(155px,-120px); transition-delay: 0.05s; }
+    .osu-nav.open .osu-nav-btn:nth-child(3) { transform: translate(185px, -30px); transition-delay: 0.10s; }
+    .osu-nav.open .osu-nav-btn:nth-child(4) { transform: translate(155px,  60px); transition-delay: 0.15s; }
+    .osu-nav.open .osu-nav-btn:nth-child(5) { transform: translate(135px, 150px); transition-delay: 0.20s; }
     .osu-nav-btn:hover {
-      background: rgba(255, 78, 154, 0.1);
-      border-color: rgba(255, 255, 255, 0.26);
-      border-left-color: rgba(255, 110, 185, 0.95);
-      color: #fff;
-      box-shadow: 0 4px 28px rgba(0,0,0,0.45), 0 0 22px rgba(255,78,154,0.28),
-                  inset 0 1px 0 rgba(255,255,255,0.08);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translate(var(--hover-x, 0), var(--hover-y, 0)) scale(1.045);
+      box-shadow:
+        0 16px 42px rgba(0,0,0,0.55),
+        0 0 30px var(--btn-accent, rgba(255,120,190,0.4)),
+        inset 0 1px 0 rgba(255,255,255,0.55);
       text-decoration: none;
     }
+    .osu-nav.open .osu-nav-btn:nth-child(1):hover { --hover-x: 55px;  --hover-y: -210px; }
+    .osu-nav.open .osu-nav-btn:nth-child(2):hover { --hover-x: 155px; --hover-y: -120px; }
+    .osu-nav.open .osu-nav-btn:nth-child(3):hover { --hover-x: 185px; --hover-y: -30px; }
+    .osu-nav.open .osu-nav-btn:nth-child(4):hover { --hover-x: 155px; --hover-y: 60px; }
+    .osu-nav.open .osu-nav-btn:nth-child(5):hover { --hover-x: 135px; --hover-y: 150px; }
     /* hint & sub-links */
     .osu-hint {
-      position: absolute; bottom: 3.2rem; left: 50%; transform: translateX(-50%);
-      margin: 0; color: rgba(255,255,255,0.3);
-      font-family: Inter, system-ui, sans-serif;
-      font-size: 0.73rem; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;
-      opacity: 0; animation: osu-hint-show 1.5s 3.8s ease forwards;
+      position: absolute; bottom: 3.4rem; left: 50%; transform: translateX(-50%);
+      margin: 0; color: rgba(255,255,255,0.28);
+      font-family: 'Exo 2', Inter, system-ui, sans-serif;
+      font-size: 0.7rem; font-weight: 300; letter-spacing: 0.22em; text-transform: uppercase; white-space: nowrap;
+      opacity: 0; animation: osu-hint-show 1.2s 3.8s ease forwards;
     }
+    .osu-hint::before { content: '◦  '; opacity: 0.6; animation: hint-pulse 2.2s ease-in-out infinite; }
+    .osu-hint::after  { content: '  ◦'; opacity: 0.6; animation: hint-pulse 2.2s ease-in-out infinite 1.1s; }
+    @keyframes hint-pulse { 0%,100%{opacity:0.3} 50%{opacity:0.9} }
     .osu-sub-links {
-      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center; gap: 0.6rem; white-space: nowrap;
+      position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 1rem; white-space: nowrap;
+      opacity: 0; animation: osu-hint-show 1.2s 4.1s ease forwards;
     }
     .osu-sub-links a {
-      color: rgba(255,255,255,0.28); font-family: Inter, system-ui, sans-serif;
-      font-size: 0.75rem; letter-spacing: 0.05em; transition: color 0.2s;
+      color: rgba(255,160,200,0.35); font-family: 'Exo 2', Inter, system-ui, sans-serif;
+      font-size: 0.72rem; font-weight: 300; letter-spacing: 0.08em;
+      transition: color 0.25s ease, text-shadow 0.25s ease; text-decoration: none;
     }
-    .osu-sub-links a:hover { color: rgba(255,255,255,0.62); text-decoration: none; }
-    .osu-sub-links span { color: rgba(255,255,255,0.14); font-size: 0.75rem; }
-    @keyframes osu-hint-show { from { opacity:0; } to { opacity:1; } }
+    .osu-sub-links a:hover {
+      color: rgba(255,210,230,0.9);
+      text-shadow: 0 0 14px rgba(255,100,160,0.65);
+      text-decoration: none;
+    }
+    .osu-sub-links span { color: rgba(255,255,255,0.12); font-size: 0.7rem; }
+    @keyframes osu-hint-show { from { opacity:0; transform:translateX(-50%) translateY(6px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
     /* ── custom osu! cursor ── */
     *, *::before, *::after { cursor: none !important; }
     #osu-cursor {
@@ -413,15 +594,28 @@
       .osu-main-cookie { top: calc(50% - 115px); left: calc(50% - 115px); width: 230px; height: 230px; }
       .osu-main-cookie.open { width: 270px; height: 270px; top: calc(50% - 135px); left: calc(50% - 135px); } /* centred on mobile, no shift */
       .osu-main-cookie.back-mode { top: calc(50% - 135px); left: -170px; }
-      .osu-initials { font-size: 3.1rem; }
-      .osu-nav { top: calc(50% + 134px); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 0.45rem; }
-      .osu-nav-btn { position: static; width: 270px; padding: 0.85rem 1.2rem; text-align: center; transform: translateY(-10px) scale(1); }
+      .osu-initials { font-size: 3.2rem; }
+      .osu-nav {
+        top: calc(50% + 130px); left: 50%; transform: translateX(-50%);
+        display: flex; flex-direction: column; gap: 0.4rem;
+        /* safety net: cap to the space actually left below the nav's own top
+           offset (50vh + 130px) so short viewports scroll internally instead
+           of running the last tab off the bottom of the screen */
+        max-height: calc(50vh - 150px); overflow-y: auto; padding: 0.2rem 0.2rem 1.5rem;
+      }
+      .osu-nav-btn {
+        position: static; width: 270px;
+        padding: 0.8rem 1.3rem; justify-content: center; text-align: center;
+        font-size: 1.18rem;
+        clip-path: none; /* the pennant point only reads correctly fanned beside the circle */
+        border-radius: 18px;
+        transform: translateY(-10px) scale(1);
+      }
       .osu-nav.open .osu-nav-btn:nth-child(1),
       .osu-nav.open .osu-nav-btn:nth-child(2),
       .osu-nav.open .osu-nav-btn:nth-child(3),
       .osu-nav.open .osu-nav-btn:nth-child(4),
       .osu-nav.open .osu-nav-btn:nth-child(5) { transform: translateY(0) scale(1); }
-      .osu-initials { font-size: 3.2rem; }
     }
   </style>
 </head>
@@ -435,10 +629,19 @@
     </div>
   </div>
 
+  <!-- reveal punctuation: brief flash + shockwave ring right as the intro lifts -->
+  <div id="osu-shockwave" aria-hidden="true"></div>
+  <div id="osu-flash" aria-hidden="true"></div>
+
   <div id="cookie-glow-bg" aria-hidden="true"></div>
 
   <header id="top" class="osu-landing">
     <canvas id="osu-bg-canvas"></canvas>
+    <div id="osu-parallax-bg" aria-hidden="true">
+      <div class="pf-layer pf-far"></div>
+      <div class="pf-layer pf-mid"></div>
+      <div class="pf-layer pf-near"></div>
+    </div>
     <div class="osu-main-cookie osu-pre-slam" id="osu-main-cookie"
          role="button" tabindex="0"
          aria-expanded="false" aria-controls="osu-nav"
@@ -467,6 +670,12 @@
       <a href="https://github.com/rychisholm3" target="_blank" rel="noopener">GitHub ↗</a>
       <span>·</span>
       <a href="mailto:rychisholm3@gmail.com">Email ↗</a>
+    </div>
+
+    <div class="osu-ambient" aria-hidden="true">
+      <div class="osu-orb osu-orb-1"></div>
+      <div class="osu-orb osu-orb-2"></div>
+      <div class="osu-orb osu-orb-3"></div>
     </div>
   </header>
 
@@ -1200,7 +1409,7 @@
       var canvas = document.getElementById('osu-bg-canvas');
       if (!canvas) return;
       var ctx = canvas.getContext('2d');
-      var DIM = 0.15;
+      var DIM = 0.3;
 
       var cachedFont = '';
       function resize() {
@@ -1273,6 +1482,7 @@
       var songData = SONGS.map(function(s) { return { song: s, objs: generateObjects(s) }; });
       var songIdx = 0, songStartTime = null;
       var bursts = [], BURST_DUR = 500;
+      var cursorTrail = [];
 
       var blobCss = { x1: -9999, y1: -9999, x2: -9999, y2: -9999 };
       var docStyle = document.documentElement.style;
@@ -1296,6 +1506,9 @@
       }
 
       function draw(now) {
+        /* the canvas sits fully behind the opaque active section — skip all
+           work (including the body blob-gradient repaint) while it's hidden */
+        if (window._sectionActive) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         updateBlobCSS(now);
         if (songStartTime === null) songStartTime = now;
@@ -1316,7 +1529,13 @@
           songData[songIdx].objs.forEach(function(o) { o._hit = false; });
           cur = songData[songIdx]; song = cur.song; objs = cur.objs;
           pre = preemptMs(song.ar); R = csRadius(song.cs) * scl; pal = song.pal;
+          cursorTrail.length = 0;
         }
+
+        /* Keep notes clear of the RC circle's footprint — previously they spawned
+           right through the center and were mostly hidden behind the cookie. */
+        var cx0 = canvas.width / 2, cy0 = canvas.height / 2;
+        var exclR = Math.min(canvas.width, canvas.height) * 0.32;
 
         /* Collect visible objects; spawn bursts for freshly-hit notes */
         var visible = [];
@@ -1324,10 +1543,12 @@
           var o = objs[oi];
           var delta = o.time - elapsed;
           if (delta > pre) continue;
+          var ox = offX + o.x * scl, oy = offY + o.y * scl;
+          if (Math.hypot(ox - cx0, oy - cy0) < exclR) continue;
           if (delta < -150) {
             if (!o._hit) {
               o._hit = true;
-              bursts.push({ x: offX + o.x * scl, y: offY + o.y * scl, r: R,
+              bursts.push({ x: ox, y: oy, r: R,
                             col: pal[(o.combo - 1) % pal.length], born: now });
             }
             continue;
@@ -1417,6 +1638,45 @@
           return true;
         });
 
+        /* ── Replay cursor: interpolates along the aim path between the last
+           and next note, so the field reads as a live play rather than static
+           floating shapes ── */
+        var curIdx = -1;
+        for (var ci = 0; ci < objs.length; ci++) {
+          if (objs[ci].time <= elapsed) curIdx = ci; else break;
+        }
+        if (curIdx >= 0 && curIdx < objs.length - 1) {
+          var ca = objs[curIdx], cb = objs[curIdx + 1];
+          var cSpan = cb.time - ca.time;
+          var cFrac = cSpan > 0 ? Math.min(1, (elapsed - ca.time) / cSpan) : 1;
+          cFrac = cFrac < 0.5 ? 2 * cFrac * cFrac : 1 - Math.pow(-2 * cFrac + 2, 2) / 2;
+          cursorTrail.push({
+            x: offX + (ca.x + (cb.x - ca.x) * cFrac) * scl,
+            y: offY + (ca.y + (cb.y - ca.y) * cFrac) * scl,
+            t: now
+          });
+        }
+        cursorTrail = cursorTrail.filter(function (p) { return now - p.t < 240; });
+        for (var ti = 0; ti < cursorTrail.length; ti++) {
+          var trp = cursorTrail[ti], age = (now - trp.t) / 240;
+          ctx.globalAlpha = DIM * 1.3 * (1 - age);
+          ctx.beginPath();
+          ctx.arc(trp.x, trp.y, Math.max(1, 3 * scl * (1 - age)), 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,1)';
+          ctx.fill();
+        }
+        if (cursorTrail.length) {
+          var tip = cursorTrail[cursorTrail.length - 1];
+          ctx.globalAlpha = DIM * 1.6;
+          ctx.beginPath();
+          ctx.arc(tip.x, tip.y, 4 * scl, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.fill();
+          ctx.lineWidth = Math.max(1, scl * 1.1);
+          ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+          ctx.stroke();
+        }
+
         /* Song label — faint, bottom-right */
         ctx.globalAlpha  = DIM * 1.3;
         ctx.font         = '11px "Exo 2",monospace';
@@ -1432,6 +1692,112 @@
       }
 
       _masterCbs.push(draw);
+    })();
+
+    /* ── Floating beatmap-panel field: original generated gradient "cover art"
+       (no real artwork) across 3 depth layers, with mouse parallax. Parallax
+       moves only the 3 layer transforms — cheap no matter how many cards. ── */
+    (function () {
+      var wrap = document.getElementById('osu-parallax-bg');
+      if (!wrap) return;
+      var far  = wrap.querySelector('.pf-far');
+      var mid  = wrap.querySelector('.pf-mid');
+      var near = wrap.querySelector('.pf-near');
+
+      /* Generated "cover art" — layered color blobs over a dark base, plus the
+         grain/sheen from CSS. Original per-card, not real beatmap artwork. */
+      var ACCENTS = [
+        '#ff3382', '#c792ea', '#89ddff', '#4ec9b0', '#f78c6c',
+        '#7b2fbf', '#2e8f4a', '#e2006a', '#1e6fb8', '#c98a1c'
+      ];
+      var BASES = [
+        '#0a0612', '#080a14', '#0c0810', '#06100c', '#100a06', '#0a0a16',
+        '#1a0a2e', '#0a1a2e', '#2e0a1a', '#0a2e1a', '#2e1a0a'
+      ];
+
+      function rnd(a, b)  { return a + Math.random() * (b - a); }
+      function pick(arr)  { return arr[Math.floor(Math.random() * arr.length)]; }
+
+      function makeArt() {
+        var layers = [];
+        var blobCount = 2 + Math.floor(rnd(0, 3));
+        for (var i = 0; i < blobCount; i++) {
+          layers.push('radial-gradient(circle at ' + rnd(10, 90).toFixed(0) + '% ' + rnd(10, 90).toFixed(0) + '%, ' +
+            pick(ACCENTS) + ' 0%, transparent ' + rnd(48, 78).toFixed(0) + '%)');
+        }
+        layers.push('linear-gradient(' + Math.round(rnd(90, 270)) + 'deg,' + pick(BASES) + ',' + pick(BASES) + ')');
+        return layers.join(',');
+      }
+
+      function makeCard(sizeMin, sizeMax) {
+        var w = rnd(sizeMin, sizeMax), h = w * 0.72;
+        var card = document.createElement('div');
+        card.className = 'pf-card';
+        card.style.width  = w.toFixed(0) + 'px';
+        card.style.height = h.toFixed(0) + 'px';
+        card.style.left = rnd(-2, 96).toFixed(1) + '%';
+        card.style.top  = rnd(-2, 96).toFixed(1) + '%';
+        card.style.setProperty('--pf-dx',    rnd(-24, 24).toFixed(0) + 'px');
+        card.style.setProperty('--pf-dy',    rnd(-20, 20).toFixed(0) + 'px');
+        card.style.setProperty('--pf-rot',   rnd(-2, 2).toFixed(2) + 'deg');
+        card.style.setProperty('--pf-dur',   rnd(22, 42).toFixed(1) + 's');
+        card.style.setProperty('--pf-delay', (-rnd(0, 30)).toFixed(1) + 's');
+
+        var art = document.createElement('div');
+        art.className = 'pf-card-art';
+        art.style.background = makeArt();
+        card.appendChild(art);
+
+        /* every card gets a faint star rating — generic difficulty flavor, no
+           real song titles or artwork */
+        var n = 1 + Math.floor(rnd(0, 5));
+        var label = document.createElement('div');
+        label.className = 'pf-card-label';
+        label.textContent = '★'.repeat(n) + '☆'.repeat(5 - n);
+        card.appendChild(label);
+
+        return card;
+      }
+
+      /* keep the few large "near" cards clear of dead-center so they never
+         compete with the RC circle itself */
+      function isCentral(card) {
+        var l = parseFloat(card.style.left), t = parseFloat(card.style.top);
+        return l > 28 && l < 72 && t > 22 && t < 78;
+      }
+
+      for (var i = 0; i < 26; i++) far.appendChild(makeCard(56, 92));
+      for (var j = 0; j < 14; j++) mid.appendChild(makeCard(92, 132));
+      for (var k = 0; k < 7; k++) {
+        var c;
+        do { c = makeCard(150, 200); } while (isCentral(c));
+        near.appendChild(c);
+      }
+
+      /* ── Mouse parallax as a 3D tilt — the plane of cards twists/turns
+         instead of sliding, via rotateX/rotateY under the parent's perspective.
+         Still just 3 transform writes per frame regardless of card count. ── */
+      var mx = 0, my = 0, tx = 0, ty = 0;
+      window.addEventListener('mousemove', function (e) {
+        mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+        my = (e.clientY / window.innerHeight - 0.5) * 2;
+      }, { passive: true });
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function tiltTransform(depthZ, maxDeg) {
+        return 'translateZ(' + depthZ + 'px) rotateX(' + (-ty * maxDeg).toFixed(2) + 'deg) rotateY(' + (tx * maxDeg).toFixed(2) + 'deg)';
+      }
+
+      function parallaxLoop() {
+        if (window._sectionActive || reduceMotion) return;
+        tx += (mx - tx) * 0.06;
+        ty += (my - ty) * 0.06;
+        far.style.transform  = tiltTransform(-260, 4);
+        mid.style.transform  = tiltTransform(-120, 8);
+        near.style.transform = tiltTransform(0, 14);
+      }
+      if (!reduceMotion) _masterCbs.push(parallaxLoop);
     })();
 
     document.getElementById("year").textContent = new Date().getFullYear();
@@ -1534,6 +1900,9 @@
 
       function openSection(section) {
         closeMenu();
+        /* the beatmap background canvas sits fully behind the opaque section —
+           stop redrawing/repainting it while it's invisible */
+        window._sectionActive = true;
         inBackMode = true;
         cookie.classList.add('back-mode');
         cookie.setAttribute('aria-label', 'Back to menu');
@@ -1576,6 +1945,7 @@
 
       function closeSection() {
         if (activeSection) { activeSection.classList.remove('active'); activeSection = null; }
+        window._sectionActive = false;
         inBackMode = false;
         cookie.classList.remove('back-mode');
         cookie.setAttribute('aria-label', 'Open navigation menu');
@@ -1660,16 +2030,19 @@
           var bass = 0;
           for (var i = 1; i < 10; i++) bass += dataArray[i];
           bass = bass / 9 / 255;
-          targetScale = 1 + bass * 0.40 * pulse;
-          targetGlow  = 50 + bass * 115;
-          /* spawn ripple only on genuinely strong beats */
-          if (!inBackMode && bass > 0.62 && now - lastBeatRippleTime > 420) {
+          targetScale = 1 + bass * 0.14 * pulse;
+          targetGlow  = 50 + bass * 90;
+          /* primary: approach ring shrinks onto the circle on every real beat —
+             this is the main "reacts to music" motion now, not a body-scale pulse */
+          if (!inBackMode && bass > 0.5 && now - lastBeatRippleTime > 380) {
             lastBeatRippleTime = now;
-            spawnRipple('cookie-beat-ripple');
+            spawnRipple('cookie-approach-ring');
+            /* outward hit-flash reserved for genuinely strong punches only */
+            if (bass > 0.74) spawnRipple('cookie-beat-ripple');
           }
         } else {
-          targetScale = 1 + Math.sin(t) * 0.038 * pulse;
-          targetGlow  = 50 + Math.sin(t) * 16;
+          targetScale = 1 + Math.sin(t) * 0.02 * pulse;
+          targetGlow  = 50 + Math.sin(t) * 10;
         }
         /* asymmetric lerp: fast punch up, slow settle down — the osu! feel */
         var lerpFactor = targetScale > curScale ? 0.28 : 0.09;
@@ -1689,7 +2062,7 @@
           var rect = cookie.getBoundingClientRect();
           var dx = Math.round(rect.left + rect.width  * 0.5 - window.innerWidth  * 0.5);
           var dy = Math.round(rect.top  + rect.height * 0.5 - window.innerHeight * 0.5);
-          var gs = (0.7 + curGlow * 0.007).toFixed(3);
+          var gs = Math.min(1.18, 0.62 + curGlow * 0.0034).toFixed(3);
           var tf = 'translate(' + dx + 'px,' + dy + 'px) scale(' + gs + ')';
           if (tf !== lastGlowTransform) {
             glowDiv.style.transform = tf;
@@ -1811,12 +2184,24 @@
         gsap.to(welcome, { opacity: 0, scale: 0.86, duration: 0.32, ease: 'power1.in' });
       }, null, 1.5);
 
+      /* Impact punctuation: a quick white flash + an expanding shockwave ring
+         right as the curtain lifts, so the cut to the main menu lands with
+         some punch instead of reading as a plain fade. */
+      tl.to('#osu-flash', { opacity: 0.95, duration: 0.09, ease: 'power1.in'  }, 1.94)
+        .to('#osu-flash', { opacity: 0,    duration: 0.5,  ease: 'power2.out' }, 2.03)
+        .fromTo('#osu-shockwave',
+            { opacity: 0.9, scale: 1 },
+            { opacity: 0, scale: 55, duration: 0.85, ease: 'power2.out' },
+            1.96);
+
       /* Dark overlay fades out once slam settles */
       tl.to(intro, { opacity: 0, duration: 0.55, ease: 'power1.inOut' }, 2.08);
 
       /* Cleanup */
       tl.call(function () {
         intro.remove();
+        document.getElementById('osu-flash').remove();
+        document.getElementById('osu-shockwave').remove();
         mainCookie.classList.remove('osu-slam-active');
       }, null, 2.65);
     })();
